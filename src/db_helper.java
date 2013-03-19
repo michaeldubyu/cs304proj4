@@ -1,38 +1,27 @@
 import java.sql.*;
 
 public class db_helper {
-static Connection conn;
 	
 	
 	/**
-	 * @param args
+	 * Static helper class to set up the connection.
 	 */
-	public static void main(String[] args) {
-		try {
-	    	DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug", "ora_i7f7", "a71163091");
-			
-			//run what you want from here
-			
-			dropAllTables();
-            //close afterwards
-			conn.close();
-          
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+	public static Connection connect(String username, String password) throws SQLException{
+    	DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+		Connection con = DriverManager.getConnection("jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug",  username, password);	
+		return con;
 	}
 	
 	/*
 	 * Drops all records from the given table.
 	 */
-	public static void dropFromTable(String table){
+	public static void dropFromTable(Connection con, String table){
         Statement stmt;
         try{
     		DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             try{
-                stmt = conn.createStatement();
+                stmt = con.createStatement();
                 String query = "DELETE FROM " + table;
                 int deletedRows=stmt.executeUpdate(query);
                 if(deletedRows>0){
@@ -54,7 +43,7 @@ static Connection conn;
 	/*
 	 * Drops all tables from the database.
 	 */
-	public static void dropAllTables(){
+	public static void dropAllTables(Connection con){
 		Statement qstmt;
 		Statement dstmt;
 		ResultSet rs;
@@ -62,8 +51,8 @@ static Connection conn;
         try{
     		DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
     		try{
-		            qstmt = conn.createStatement();
-		            dstmt = conn.createStatement();
+		            qstmt = con.createStatement();
+		            dstmt = con.createStatement();
 		            
 		            String qQuery = "SELECT * FROM cat";
 		            rs = qstmt.executeQuery(qQuery);
