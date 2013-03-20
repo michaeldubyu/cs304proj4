@@ -40,7 +40,6 @@ public class MainGUI{
 	class MyActionListener implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {	
-			//wait 10 seconds until timeout
 			if (e.getActionCommand()=="clerk"){
 				System.out.println("clerk!");
 				Clerk c = new Clerk();
