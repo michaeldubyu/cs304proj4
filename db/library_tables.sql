@@ -12,17 +12,17 @@ create table Borrower
 	
 drop table BorrowerType;
 create table BorrowerType
-	(type type char(10) not null,
+	(type char(10) not null,
 	bookTimeLimit int null);
 	
 drop table Book;
 create table Book
 	(callNumber varchar(40) not null,
-	isbn number(10) null,
+	isbn varchar(10) null,
 	title varchar(40) null,
 	mainAuthor char(40) null,
 	publisher char(40) null,
-	publicationYear year not null);
+	publicationYear varchar(10) not null);
 	
 drop table HasAuthor;
 create table HasAuthor
@@ -31,12 +31,12 @@ create table HasAuthor
 	
 drop table HasSubject;
 create table HasSubject
-	(callNumber int not null,
+	(callNumber varchar(40) not null,
 	subject char(20) not null);
 
 drop table BookCopy;
 create table BookCopy
-	(callNumber int not null,
+	(callNumber varchar(40) not null,
 	copyNo int not null,
 	status char(10) null);
 	
@@ -53,8 +53,7 @@ CREATE TABLE fine(
         amount number(10) not null,
         issuedDate varChar(20) not null,
         paidDate varChar(20) null,
-        boridId char(8) null,
-        );
+        boridId char(8) null);
 
 drop table borrowing;
 CREATE TABLE borrowing(
@@ -72,7 +71,7 @@ values('KF8840.F72.1999','0123456789', 'how 2 be a chill bro',
 'Dr. Mike Wu', 'Penguin', '1999');
 
 insert into BookCopy
-values('KF8840.F72.1999','1', 'reserved');
+values('KF8840.F72.1999',1, 'reserved');
 
 insert into HasAuthor
 values('KF8840.F72.1999','Dr. Mike Wu');
