@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 import java.sql.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+=======
+import java.awt.*;
+import java.awt.event.*;
+>>>>>>> 6db346f7b96d40a7f332429686e01270f6986deb
 
 public class Clerk {
 
@@ -14,7 +19,11 @@ public class Clerk {
 		final Button processReturn;
 		final Button checkOverDue;
 		
+<<<<<<< HEAD
 		Frame clerkFrame = new Frame();
+=======
+		final Frame clerkFrame = new Frame();
+>>>>>>> 6db346f7b96d40a7f332429686e01270f6986deb
 		ActionListener al = new MyActionListener();
 		
 		clerkFrame.setLayout(new GridLayout(4,1));
@@ -42,7 +51,11 @@ public class Clerk {
 		clerkFrame.pack();
         clerkFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
+<<<<<<< HEAD
                 System.exit(0);
+=======
+                clerkFrame.setVisible(false);
+>>>>>>> 6db346f7b96d40a7f332429686e01270f6986deb
             }
         } );
 		clerkFrame.setTitle("MDMJ Library Systems - Clerk Management System");
