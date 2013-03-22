@@ -41,11 +41,10 @@ public class MainGUI{
 
 		public void actionPerformed(ActionEvent e) {	
 			if (e.getActionCommand()=="clerk"){
-				System.out.println("clerk!");
 				Clerk c = new Clerk();
 			}
 			else if (e.getActionCommand()=="borrower"){
-				System.out.println("borrower!");
+				Borrower b = new Borrower();
 			}else if (e.getActionCommand()=="librarian"){
 				System.out.println("librarian!");
 			}
