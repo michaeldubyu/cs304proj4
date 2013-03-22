@@ -1,4 +1,3 @@
-import java.sql.*;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -11,37 +10,36 @@ public class Librarian {
 		final Button addBook;
 		final Button genCheckOutReport;
 		final Button genPopularReport;
-		final Button checkOverDue;
 		
-		Frame borrowerFrame = new Frame();
+		final Frame librarianFrame = new Frame();
 		ActionListener al = new MyActionListener();
 		
-		borrowerFrame.setLayout(new GridLayout(3,1));
+		librarianFrame.setLayout(new GridLayout(3,1));
 		
 		addBook = new Button("Add a Book");
 		addBook.setActionCommand("add book");
 		addBook.addActionListener(al);
-		borrowerFrame.add(addBook);
+		librarianFrame.add(addBook);
 		
 		genCheckOutReport = new Button("Generate a Checkout Report");
 		genCheckOutReport.setActionCommand("checkout report");
 		genCheckOutReport.addActionListener(al);
-		borrowerFrame.add(genCheckOutReport);
+		librarianFrame.add(genCheckOutReport);
 
 		genPopularReport = new Button("Generate a Popular Book Report");
 		genPopularReport.setActionCommand("popular report");
 		genPopularReport.addActionListener(al);
-		borrowerFrame.add(genPopularReport);
+		librarianFrame.add(genPopularReport);
 		
-		borrowerFrame.pack();
-		borrowerFrame.setLocationRelativeTo(m);
-        borrowerFrame.addWindowListener( new WindowAdapter() {
+		librarianFrame.pack();
+		librarianFrame.setLocationRelativeTo(m);
+        librarianFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
-                System.exit(0);
+                librarianFrame.setVisible(false);
             }
         } );
-		borrowerFrame.setTitle("MDMJ Library Systems - Librarian Management");
-		borrowerFrame.setVisible(true);
+		librarianFrame.setTitle("MDMJ Library Systems - Librarian Management");
+		librarianFrame.setVisible(true);
 	}
 
 	class MyActionListener implements ActionListener{

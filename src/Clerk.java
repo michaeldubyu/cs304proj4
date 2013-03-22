@@ -1,7 +1,5 @@
-import java.sql.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 
 public class Clerk {
 
@@ -14,7 +12,7 @@ public class Clerk {
 		final Button processReturn;
 		final Button checkOverDue;
 		
-		Frame clerkFrame = new Frame();
+		final Frame clerkFrame = new Frame();
 		ActionListener al = new MyActionListener();
 		
 		clerkFrame.setLayout(new GridLayout(4,1));
@@ -42,7 +40,7 @@ public class Clerk {
 		clerkFrame.pack();
         clerkFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
-                System.exit(0);
+                clerkFrame.setVisible(false);
             }
         } );
 		clerkFrame.setTitle("MDMJ Library Systems - Clerk Management System");

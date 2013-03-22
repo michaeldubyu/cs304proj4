@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class MainGUI{
-	private static final long serialVersionUID = 4149825008429377286L;
 	Frame mainFrame;
 	Clerk c;
 	Librarian l;
@@ -63,8 +62,7 @@ public class MainGUI{
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		MainGUI m = new MainGUI();
+		new MainGUI();
 	}
 
 

@@ -47,7 +47,6 @@ public class db_helper {
 		Statement qstmt;
 		Statement dstmt;
 		ResultSet rs;
-		String[] tables;
         try{
     		DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
     		try{

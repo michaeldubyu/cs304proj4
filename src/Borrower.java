@@ -1,4 +1,3 @@
-import java.sql.*;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -13,7 +12,7 @@ public class Borrower {
 		final Button hold;
 		final Button payFines;
 		
-		Frame borrowerFrame = new Frame();
+		final Frame borrowerFrame = new Frame();
 		ActionListener al = new MyActionListener();
 		
 		borrowerFrame.setLayout(new GridLayout(4,1));
@@ -42,7 +41,7 @@ public class Borrower {
 		borrowerFrame.setTitle("MDMJ Library Systems - Borrower Actions");
         borrowerFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
-                System.exit(0);
+                borrowerFrame.setVisible(false);
             }
         } );
 		borrowerFrame.setLocationRelativeTo(m);  
