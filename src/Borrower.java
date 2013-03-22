@@ -7,40 +7,45 @@ public class Borrower {
 	/**
 	 * Instantiate the Clerk sub menus and structure.
 	 */
-	public Borrower(){
-		final Button addBorrower;
-		final Button checkOut;
-		final Button processReturn;
-		final Button checkOverDue;
+	public Borrower(Frame m){
+		final Button search;
+		final Button checkAccount;
+		final Button hold;
+		final Button payFines;
 		
 		Frame borrowerFrame = new Frame();
 		ActionListener al = new MyActionListener();
 		
 		borrowerFrame.setLayout(new GridLayout(4,1));
 		
-		addBorrower = new Button("Search For Books");
-		addBorrower.setActionCommand("search");
-		addBorrower.addActionListener(al);
-		borrowerFrame.add(addBorrower);
+		search = new Button("Search For Books");
+		search.setActionCommand("search");
+		search.addActionListener(al);
+		borrowerFrame.add(search);
 		
-		checkOut = new Button("Check Account");
-		checkOut.setActionCommand("check account");
-		checkOut.addActionListener(al);
-		borrowerFrame.add(checkOut);
+		checkAccount = new Button("Check Account");
+		checkAccount.setActionCommand("check account");
+		checkAccount.addActionListener(al);
+		borrowerFrame.add(checkAccount);
 
-		processReturn = new Button("Place a Hold Request");
-		processReturn.setActionCommand("hold");
-		processReturn.addActionListener(al);
-		borrowerFrame.add(processReturn);
+		hold = new Button("Place a Hold Request");
+		hold.setActionCommand("hold");
+		hold.addActionListener(al);
+		borrowerFrame.add(hold);
 		
-		checkOverDue = new Button("Pay Fines");
-		checkOverDue.setActionCommand("pay");
-		checkOverDue.addActionListener(al);
-		borrowerFrame.add(checkOverDue);
+		payFines = new Button("Pay Fines");
+		payFines.setActionCommand("pay");
+		payFines.addActionListener(al);
+		borrowerFrame.add(payFines);
 		
 		borrowerFrame.pack();
 		borrowerFrame.setTitle("MDMJ Library Systems - Borrower Actions");
-		borrowerFrame.setLocationRelativeTo(null);  
+        borrowerFrame.addWindowListener( new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                System.exit(0);
+            }
+        } );
+		borrowerFrame.setLocationRelativeTo(m);  
 		borrowerFrame.setVisible(true);
 	}
 
@@ -48,15 +53,15 @@ public class Borrower {
 
 		public void actionPerformed(ActionEvent e) {	
 			//wait 10 seconds until timeout
-			if (e.getActionCommand()=="add borrower"){
-				System.out.println("add borrower");
+			if (e.getActionCommand()=="search"){
+
 			}
-			else if (e.getActionCommand()=="check out"){
-				System.out.println("check out");
-			}else if (e.getActionCommand()=="return"){
-				System.out.println("return");
-			}else if (e.getActionCommand()=="check overdues"){
-				System.out.println("check overdues");
+			else if (e.getActionCommand()=="check account"){
+
+			}else if (e.getActionCommand()=="hold"){
+
+			}else if (e.getActionCommand()=="pay"){
+
 			}
 		}
 	}

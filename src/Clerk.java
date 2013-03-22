@@ -1,13 +1,14 @@
 import java.sql.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 public class Clerk {
 
 	/**
 	 * Instantiate the Clerk sub menus and structure.
 	 */
-	public Clerk(){
+	public Clerk(Frame m){
 		final Button addBorrower;
 		final Button checkOut;
 		final Button processReturn;
@@ -39,8 +40,13 @@ public class Clerk {
 		clerkFrame.add(checkOverDue);
 		
 		clerkFrame.pack();
+        clerkFrame.addWindowListener( new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                System.exit(0);
+            }
+        } );
 		clerkFrame.setTitle("MDMJ Library Systems - Clerk Management System");
-		clerkFrame.setLocationRelativeTo(null);  
+		clerkFrame.setLocationRelativeTo(m);  
 		clerkFrame.setVisible(true);
 	}
 

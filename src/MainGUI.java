@@ -3,7 +3,10 @@ import java.awt.event.*;
 
 public class MainGUI{
 	private static final long serialVersionUID = 4149825008429377286L;
-
+	Frame mainFrame;
+	Clerk c;
+	Librarian l;
+	Borrower b;
 	/*
 	 * instantiate the GUI 
 	 */
@@ -11,7 +14,7 @@ public class MainGUI{
 		final Button clerk;
 		final Button librarian;
 		final Button borrower;
-		Frame mainFrame = new Frame();
+		mainFrame = new Frame();
 		ActionListener al = new MyActionListener();
 		
 		//arrange items left to right, then to the next row
@@ -33,6 +36,12 @@ public class MainGUI{
 		mainFrame.add(borrower);
 		
 		mainFrame.pack();
+		mainFrame.setLocationRelativeTo(null);
+        mainFrame.addWindowListener( new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                System.exit(0);
+            }
+        } );
 		mainFrame.setTitle("MDMJ Library Systems");
 		mainFrame.setVisible(true);
 	}	
@@ -40,13 +49,12 @@ public class MainGUI{
 	class MyActionListener implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {	
-			if (e.getActionCommand()=="clerk"){
-				Clerk c = new Clerk();
-			}
-			else if (e.getActionCommand()=="borrower"){
-				Borrower b = new Borrower();
-			}else if (e.getActionCommand()=="librarian"){
-				System.out.println("librarian!");
+			if (e.getActionCommand()=="clerk" && c == null){
+				c = new Clerk(mainFrame);
+			}else if (e.getActionCommand()=="borrower" && b == null){
+				b = new Borrower(mainFrame);
+			}else if (e.getActionCommand()=="librarian" && l == null){
+				l = new Librarian(mainFrame);
 			}
 		}
 	}
