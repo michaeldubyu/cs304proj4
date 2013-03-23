@@ -53,7 +53,8 @@ public class BookTable {
 	
 	public static void insertBook(String callNumber, String isbn, String title,
 			String mainAuthor,String publisher,String year, String subject1,
-			String subject2, String subject3, String amount)
+			String subject2, String subject3, String amount) 
+			throws IllegalArgumentException
 	{
 		ResultSet  rs;
 		PreparedStatement ps;
@@ -106,7 +107,7 @@ public class BookTable {
 				throw e1;
 	    		} 
 			
-			
+			insertCopy(callNumber, true);
 	    		
 			
 			
