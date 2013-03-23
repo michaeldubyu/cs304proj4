@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import java.sql.*;
-=======
->>>>>>> 6db346f7b96d40a7f332429686e01270f6986deb
 import java.awt.*;
 import java.awt.event.*;
 
@@ -15,12 +11,8 @@ public class Borrower {
 		final Button checkAccount;
 		final Button hold;
 		final Button payFines;
-		
-<<<<<<< HEAD
-		Frame borrowerFrame = new Frame();
-=======
+
 		final Frame borrowerFrame = new Frame();
->>>>>>> 6db346f7b96d40a7f332429686e01270f6986deb
 		ActionListener al = new MyActionListener();
 		
 		borrowerFrame.setLayout(new GridLayout(4,1));
@@ -49,11 +41,7 @@ public class Borrower {
 		borrowerFrame.setTitle("MDMJ Library Systems - Borrower Actions");
         borrowerFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
-<<<<<<< HEAD
-                System.exit(0);
-=======
                 borrowerFrame.setVisible(false);
->>>>>>> 6db346f7b96d40a7f332429686e01270f6986deb
             }
         } );
 		borrowerFrame.setLocationRelativeTo(m);  
