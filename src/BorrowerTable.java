@@ -61,34 +61,32 @@ public class BorrowerTable {
 			  ps.setInt(5, p);
 		  }
 		  //Set email
-		  if (!email.matches(".*@*"))
+		  if (!email.matches(".*@.*"))
 			  throw new IllegalArgumentException("Invalid email address");
 		  else
 			  ps.setString(6, email);
 		  
 		  //Set sinOrstNo
-		  if (!sinOrStNo.matches("^\\d*$"))
+		  if ((!sinOrStNo.matches("^\\d*$"))||sinOrStNo.equals(""))
 			  throw new IllegalArgumentException("Invalid SIN or Student Number");
 		  else
 		  {
 			  int s = Integer.parseInt(sinOrStNo);
-			  if ((9999999<s)||(s<100000000))
-				  throw new IllegalArgumentException("Invalid SIN or Student Number");
-			  else
 				  ps.setInt(7, s);
 		  }
 		  
 		  //Set Expiry Date
-		  if (!sinOrStNo.matches("^\\d*$"))
+		  if (!expiryDate.matches("^\\d*$"))
 			  throw new IllegalArgumentException("Needs to be UNIX time bro");
 		  else
 		  {
-			  int d = Integer.parseInt(sinOrStNo);
-			  ps.setInt(7, d);
+			  int d = Integer.parseInt(expiryDate);
+			  ps.setInt(8, d);
 		  }
 		  
 		  //Set Type
-		  if (!(type.equals("Faculty"))||(type.equals("Staff"))||(type.equals("Student")))
+		  String lc_type = type.toLowerCase();
+		  if (!((lc_type.equals("Faculty"))||(lc_type.equals("Staff"))||(lc_type.equals("Student"))))
 			  throw new IllegalArgumentException("Invalid Borrower Type");
 		  else
 			  ps.setString(9, type);
