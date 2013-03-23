@@ -6,8 +6,14 @@ public class BorrowerTable {
 	
 	private static Connection con;
 	
-	public static void insertBorrower(String bid, String password, String name, String address, String phone, String email, String sinOrStNo, String expiryDate, String type)
-	throws IllegalArgumentException
+	private static final String[] attNames = 
+		{"bid", "password", "name", "address", "phone", "email", "sinOrStNo","expiryDate","type"};
+	
+	
+	//Insert a borrower into the table
+	public static void insertBorrower(String bid, String password, String name, String address, 
+									  String phone, String email, String sinOrStNo, String expiryDate, 
+									  String type) throws IllegalArgumentException
     {
 	
 	PreparedStatement  ps;
@@ -106,18 +112,11 @@ public class BorrowerTable {
 	    }
 	}
     }
-	/*
-	public static void showBorrowers()
+
+	//Display all borrowers in the database
+	public static ArrayList<ArrayList<String>> showBorrowers()
     {
-		String bid; 
-		String password; 
-		String name; 
-		String address; 
-		int phone; 
-		String email; 
-		int sinOrStNo;
-		Date expiryDate;
-		String type;
+
 		Statement  stmt;
 		ResultSet  rs;
 		
@@ -135,9 +134,6 @@ public class BorrowerTable {
 	  // get number of columns
 	  int numCols = rsmd.getColumnCount();
 
-	  System.out.println(" ");
-	  
-
 
 	  while(rs.next())
 	  {
@@ -146,48 +142,29 @@ public class BorrowerTable {
 
 	      // simplified output formatting; truncation may occur
 		  
-		  ArrayList<String> currentBorrower = new ArrayList<String>();
+		  ArrayList<String> aBorrower = new ArrayList<String>();
 
-	      bid = rs.getString("bid");
-
-	      currentBorrower.add(bid);
+		  for (String anAttribute: attNames)
+			  aBorrower.add(rs.getString(anAttribute));
 	      
-	      //Don't print passwords
-	      //password = rs.getString("password");
-	      System.out.printf("%-20.20s", "********");
-
-	      name = rs.getString("name");
-	      if (rs.wasNull())
-	    	  System.out.printf("%-20.20s", " ");
-	      else
-	    	  System.out.printf("%-20.20s", name);
+		  result.add(aBorrower);
 
 
-	      bcity = rs.getString("branch_city");
-	      System.out.printf("%-15.15s", bcity);
-
-	      bphone = rs.getString("branch_phone");
-	      if (rs.wasNull())
-	      {
-	    	  System.out.printf("%-15.15s\n", " ");
-              }
-	      else
-	      {
-	    	  System.out.printf("%-15.15s\n", bphone);
-	      }      
 	  }
  
 	  // close the statement; 
 	  // the ResultSet will also be closed
 	  stmt.close();
+	  
 	}
 	catch (SQLException ex)
 	{
 	    System.out.println("Message: " + ex.getMessage());
 	}	
+	return result;
     }
 	
-    */
+	
 
 
 }
