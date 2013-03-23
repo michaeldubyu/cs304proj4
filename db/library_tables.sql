@@ -7,7 +7,7 @@ create table Borrower
 	phone char(12) null,
 	emailAddress varchar(40) null,
 	sinOrStNo char(20) null,
-	expiryDate char(2) null,
+	expiryDate char(20) null,
 	btype char(10) null);
 	
 drop table BorrowerType;

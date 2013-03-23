@@ -4,12 +4,13 @@ import java.awt.event.*;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class AddBorrower {
+public class CheckOutBook {
 
-	public AddBorrower(){
+	public CheckOutBook(){
 		
-		//create a form for the user to input : bid, name, password, address, phone, email, sinstnum, expirydate, type
-		
+
+		//a form for checking out books
+		//input: borid (pkey for the table), bid (the user id), callNumber, copy no, outdate
 		final Frame insertFrame = new Frame();
 		final JTextField name = new JTextField(20);
 		final JTextField password = new JTextField(20);

@@ -58,7 +58,7 @@ public class Clerk {
 				new AddBorrower();
 			}
 			else if (e.getActionCommand()=="check out"){
-				System.out.println("check out");
+				new CheckOutBook();
 			}else if (e.getActionCommand()=="return"){
 				System.out.println("return");
 			}else if (e.getActionCommand()=="check overdues"){
