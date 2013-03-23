@@ -8,57 +8,40 @@ public class CheckOutBook {
 
 	public CheckOutBook(){
 		
-
 		//a form for checking out books
 		//input: borid (pkey for the table), bid (the user id), callNumber, copy no, outdate
 		final Frame insertFrame = new Frame();
-		final JTextField name = new JTextField(20);
-		final JTextField password = new JTextField(20);
 		final JTextField bid = new JTextField(20);
-		final JTextField address = new JTextField(20);
-		final JTextField phone = new JTextField(20);
-		final JTextField email = new JTextField(20);
-		final JTextField sinstnum = new JTextField(20);
-		final JTextField expirydate = new JTextField(20);
-		final JTextField type = new JTextField(20);
+		final JTextField borid = new JTextField(20);
+		final JTextField callNo = new JTextField(20);
+		final JTextField copyNo = new JTextField(20);
+		final JTextField inDate = new JTextField(20);
 		
-		insertFrame.setLayout(new GridLayout(10,2));
+		insertFrame.setLayout(new GridLayout(6,2));
 
-		Label bidLabel = new Label("Borrower ID:");
-		Label nameLabel = new Label("Name* :");
-		Label passwordLabel = new Label("Password* :");
-		Label addressLabel = new Label("Address :");
-		Label phoneLabel = new Label("Phone :");
-		Label emailLabel = new Label("Email* :");
-		Label sinstnumLabel = new Label("SIN/Student Number :");
-		Label expiryDateLabel = new Label("Expiry Date (UNIX TIME) :");
-		Label typeLabel = new Label("Account Type* :");
+		Label boridLabel = new Label("Borrowing Transaction ID* :");
+		Label bidLabel = new Label("Borrower ID* :");
+		Label callNoLabel = new Label("Call No* :");
+		Label copyNoLabel = new Label("Copy No* :");
+		Label inDateLabel = new Label("In Date* (UNIX TIME) :");
 
 		insertFrame.add(bidLabel);
 		insertFrame.add(bid);
-		insertFrame.add(nameLabel);
-		insertFrame.add(name);
-		insertFrame.add(passwordLabel);
-		insertFrame.add(password);
-		insertFrame.add(addressLabel);
-		insertFrame.add(address);
-		insertFrame.add(phoneLabel);
-		insertFrame.add(phone);
-		insertFrame.add(emailLabel);
-		insertFrame.add(email);
-		insertFrame.add(sinstnumLabel);
-		insertFrame.add(sinstnum);
-		insertFrame.add(expiryDateLabel);
-		insertFrame.add(expirydate);
-		insertFrame.add(typeLabel);
-		insertFrame.add(type);
-
+		insertFrame.add(boridLabel);
+		insertFrame.add(borid);
+		insertFrame.add(callNoLabel);
+		insertFrame.add(callNo);
+		insertFrame.add(copyNoLabel);
+		insertFrame.add(copyNo);
+		insertFrame.add(inDateLabel);
+		insertFrame.add(inDate);
+		
 		Button submit = new Button("Submit");
 		insertFrame.add(new Label("(*)Required fields marked.")); //to pad the submit button to the right
 		insertFrame.add(submit);
 		insertFrame.setLocationRelativeTo(null);
 		insertFrame.pack();
-		insertFrame.setTitle("Add A Borrower");
+		insertFrame.setTitle("Check Out A Book");
 		insertFrame.setVisible(true);
 		bid.requestFocus();
 		
@@ -66,8 +49,8 @@ public class CheckOutBook {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-		        	BorrowerTable.insertBorrower(bid.getText(), password.getText(), name.getText(), address.getText(),
-		        			phone.getText(),email.getText(), sinstnum.getText(),expirydate.getText(), type.getText());
+		        	BorrowingTable.insertBorrowing(borid.getText(), bid.getText(), 
+		        			callNo.getText(), copyNo.getText(), inDate.getText());
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");
 	        		Label error = new Label(argException.getMessage());
@@ -78,7 +61,6 @@ public class CheckOutBook {
 	        		errorFrame.setLocationRelativeTo(insertFrame);
 	                errorFrame.addWindowListener( new WindowAdapter() {
 	                    public void windowClosing(WindowEvent we) {
-	                
 	                        errorFrame.setVisible(false);
 	                    }
 	                } );

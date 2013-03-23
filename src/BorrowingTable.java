@@ -9,76 +9,104 @@ public class BorrowingTable {
 	private static final String[] attNames = 
 		{"borid", "bid", "callNumber", "copyNo", "outDate", "inDate"}; 
 	
-	/*
+	/* 
 	 * Used for CheckOutBook for the action of the Clerk to check out a bunch of books for a given user.
 	 * borid is the unique number to log this transaction, not to be confused with bid, the id of the user borrowing
 	 * indate is given, but outdate should be computed dynamically as soon as the item is checked in based on the user's type
 	 * therefore, we need to 1.) ensure bid is valid, then 2.) look up type on bid with the borrower table before we proceed
 	 * with anything further
 	 */
-	public static void insertBorrowing(String borid, String bid, String callNumber, String copyNo, 
-			  String outDate, String inDate) throws IllegalArgumentException
+	public static void insertBorrowing(String borid, String bid, String callNumber, String copyNo, String inDate) 
+			throws IllegalArgumentException
 	{
 		String userType = null;
-		int userCount = 0;
+		int outDate = 0;
 
-			try {
-				con = db_helper.connect("ora_i7f7", "a71163091");
-				
-				Statement s= con.createStatement();
-				ResultSet rs;
-				rs = s.executeQuery("SELECT type FROM BORROWER WHERE id = '" + bid + "'");
-				userType = rs.getString("type");
-				userCount = rs.getFetchSize();
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			if (userCount == 0) throw new IllegalArgumentException("User does not exist!");
-			PreparedStatement  ps;
-
-			try
-			{
-				ps = con.prepareStatement("INSERT INTO borrowing VALUES (?,?,?,?,?,?)");
-
-				ps.setString(1, bid);
-				ps.setString(2, borid);
-				ps.setString(3, callNumber);
-				ps.setString(4, copyNo);
-				
-				if (!outDate.matches("^\\d*$")||outDate.equals(""))
-					  throw new IllegalArgumentException("Needs to be UNIX time bro");
-				  else
-				  {
-					  int d = Integer.parseInt(outDate);
-					  ps.setInt(5, d);
-				  }
-				
-				if (!inDate.matches("^\\d*$")||inDate.equals(""))
-					  throw new IllegalArgumentException("Needs to be UNIX time bro");
-				  else
-				  {
-					  int i = Integer.parseInt(outDate);
-					  ps.setInt(6, i);
-				  }
-				
-				
-
+		if (bid.equals("")) throw new IllegalArgumentException("Borrower ID cannot be empty!");
+		
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+			Statement s = con.createStatement();
+			ResultSet rs;
+			
+			//get the borrower type
+			rs = s.executeQuery("SELECT * FROM BORROWER WHERE bid = '" + bid + "'");
+			
+			while (rs.next()) {
+				System.out.println(rs.getString("name"));
+				userType = rs.getString("btype");
 			}
 			
-			catch (SQLException ex)
-			{
-			    System.out.println("Message: " + ex.getMessage());
-			    try 
-			    {
+			//try to cast the indate to a time
+			outDate = Integer.parseInt(inDate);
+			switch (userType){
+				case("student"):
+					outDate += 1209600; //2 weeks in seconds we add on
+					break;
+				case("faculty"):
+					outDate += 7257600; //12 weeks
+					break;
+				case("staff"):
+					outDate += 3628800; //6 weeks
+					break;
+			}
+		}catch (NumberFormatException e){
+			throw new IllegalArgumentException("In date is not of valid format - needs to be numbers and nonempty.");				
+		}catch (Exception e) {}
+		
+		if (userType == null) throw new IllegalArgumentException("User does not exist!");
+		
+		PreparedStatement  ps;
+
+		try
+		{
+			ps = con.prepareStatement("INSERT INTO borrowing VALUES (?,?,?,?,?,?)");
+
+			//set borid
+			if (borid.equals("")) throw new IllegalArgumentException("Borrowing Transaction ID cannot be empty!");
+			else ps.setString(1, borid);
+			
+			//set bid - at this point its already validated, so no longer need to run regex through it
+			ps.setString(2, bid);
+			
+			//set callNumber
+		    if (callNumber.equals(""))
+				throw new IllegalArgumentException("Call number cannot be empty!");
+		    else
+		    	ps.setString(3,callNumber);
+			
+			//set copyNo
+		    if (copyNo.equals(""))
+		    	throw new IllegalArgumentException("Copy number cannot be empty!");
+		    else
+		    	ps.setString(4,copyNo);
+		    
+		    //set outDate - it's guaranted to be of an integer type at this point
+			ps.setString(5, Integer.toString(outDate));
+			
+			//set inDate - also guaranteed to be of integer in string format at this point
+			ps.setString(6, inDate);
+			
+			System.out.println(ps);
+			
+			ps.executeUpdate();
+			con.commit();
+			con.close();
+		}
+		
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		    try 
+		    {
 				// undo the insert
 				con.rollback();	
-			    }
-			    catch (SQLException ex2)
-			    {
+		    }
+		    catch (SQLException ex2)
+		    {
 				System.out.println("Message: " + ex2.getMessage());
 				System.exit(-1);
-			    }
-			}
-}
+		    }
+		}
+	}
 }
