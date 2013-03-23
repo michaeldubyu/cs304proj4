@@ -11,7 +11,7 @@ public class BorrowerTable {
 	
 	
 	//Insert a borrower into the table
-	public static void insertBorrower(String bid, String password, String name, String address, 
+	public static void insertBorrower(String password, String name, String address, 
 									  String phone, String email, String sinOrStNo, String expiryDate, 
 									  String type) throws IllegalArgumentException
     {
@@ -25,10 +25,12 @@ public class BorrowerTable {
 		  
 		try
 		{
-		  ps = con.prepareStatement("INSERT INTO borrower VALUES (?,?,?,?,?,?,?,?,?)");
+		  ps = con.prepareStatement("INSERT INTO borrower " +
+		  		"(password, name, address, phone, emailAddress, sinOrStNo, expiryDate, btype) " +
+		  		"VALUES (?,?,?,?,?,?,?,?)");
 		
 		  //Set bid
-		  ps.setString(1, bid);
+		  //ps.setString(1, bid);
 		  
 		  //Set password
 		  if (!((password.matches(".*\\d.*"))&&(!password.matches("^\\d*$"))))
@@ -36,35 +38,35 @@ public class BorrowerTable {
 		  if (!((password.length()>=7)&& (password.length())<=13))
 			  throw new IllegalArgumentException("Password must be between 8 and 12 characters");
 		  else
-			  ps.setString(2, password.toString());
+			  ps.setString(1, password.toString());
 		  
 		  //Set name
 		  if (name.equals(""))
 			  throw new IllegalArgumentException("Invalid name");
 		  else
-			  ps.setString(3,name);
+			  ps.setString(2,name);
 		  
 		  //Set address
 		  if (address.equals(""))
-			  ps.setNull(4, java.sql.Types.VARCHAR);
+			  ps.setNull(3, java.sql.Types.VARCHAR);
 		  else
-			  ps.setString(4,address);
+			  ps.setString(3,address);
 		  
 		  //Set phone
 		  if (phone.equals(""))
-			  ps.setNull(5, java.sql.Types.INTEGER);  
+			  ps.setNull(4, java.sql.Types.INTEGER);  
 		  else if (!phone.matches("^\\d*$"))
 			  throw new IllegalArgumentException("Invalid phone number");
 		  else
 		  {
 			  int p = Integer.parseInt(phone);
-			  ps.setInt(5, p);
+			  ps.setInt(4, p);
 		  }
 		  //Set email
 		  if (!email.matches(".*@.*"))
 			  throw new IllegalArgumentException("Invalid email address");
 		  else
-			  ps.setString(6, email);
+			  ps.setString(5, email);
 		  
 		  //Set sinOrstNo
 		  if ((!sinOrStNo.matches("^\\d*$"))||sinOrStNo.equals(""))
@@ -72,7 +74,7 @@ public class BorrowerTable {
 		  else
 		  {
 			  int s = Integer.parseInt(sinOrStNo);
-				  ps.setInt(7, s);
+				  ps.setInt(6, s);
 		  }
 		  
 		  //Set Expiry Date
@@ -81,7 +83,7 @@ public class BorrowerTable {
 		  else
 		  {
 			  int d = Integer.parseInt(expiryDate);
-			  ps.setInt(8, d);
+			  ps.setInt(7, d);
 		  }
 		  
 		  //Set Type
@@ -89,7 +91,7 @@ public class BorrowerTable {
 		  if (! ((lc_type.equals("faculty"))||(lc_type.equals("staff"))||(lc_type.equals("student"))))
 			  throw new IllegalArgumentException("Invalid Borrower Type");
 		  else
-			  ps.setString(9, type);
+			  ps.setString(8, type);
 		  
 		  System.out.println(ps);
 		  

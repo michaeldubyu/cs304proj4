@@ -21,7 +21,7 @@ public class AddBorrower {
 		final JTextField expirydate = new JTextField(20);
 		final JTextField type = new JTextField(20);
 		
-		insertFrame.setLayout(new GridLayout(10,2));
+		insertFrame.setLayout(new GridLayout(9,2));
 
 		Label bidLabel = new Label("Borrower ID:");
 		Label nameLabel = new Label("Name* :");
@@ -33,8 +33,8 @@ public class AddBorrower {
 		Label expiryDateLabel = new Label("Expiry Date (UNIX TIME) :");
 		Label typeLabel = new Label("Account Type* :");
 
-		insertFrame.add(bidLabel);
-		insertFrame.add(bid);
+		//insertFrame.add(bidLabel);
+		//insertFrame.add(bid);
 		insertFrame.add(nameLabel);
 		insertFrame.add(name);
 		insertFrame.add(passwordLabel);
@@ -65,7 +65,7 @@ public class AddBorrower {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-		        	BorrowerTable.insertBorrower(bid.getText(), password.getText(), name.getText(), address.getText(),
+		        	BorrowerTable.insertBorrower(password.getText(), name.getText(), address.getText(),
 		        			phone.getText(),email.getText(), sinstnum.getText(),expirydate.getText(), type.getText());
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");

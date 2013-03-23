@@ -1,6 +1,6 @@
 drop table Borrower;
 create table Borrower
-	(bid char(20) not null,
+	(bid int not null,
 	password varchar(20) null,
 	name char(40) null,
 	address varchar(40) null,
@@ -10,9 +10,10 @@ create table Borrower
 	expiryDate char(20) null,
 	btype char(10) null);
 	
+drop sequence bid_incr;
 CREATE SEQUENCE bid_incr
 	START WITH 1
-	INCREMENT BY 1
+	INCREMENT BY 1;
 
 CREATE OR REPLACE TRIGGER bid_incr
 	BEFORE INSERT
