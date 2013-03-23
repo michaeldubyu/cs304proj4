@@ -10,6 +10,20 @@ create table Borrower
 	expiryDate char(20) null,
 	btype char(10) null);
 	
+CREATE SEQUENCE bid_incr
+	START WITH 1
+	INCREMENT BY 1
+
+CREATE OR REPLACE TRIGGER bid_incr
+	BEFORE INSERT
+	ON Borrower
+	REFERENCING NEW AS NEW
+	FOR EACH ROW
+	BEGIN
+	SELECT bid_incr.nextval INTO :NEW.bid FROM dual;
+	END;
+	/
+	
 drop table BorrowerType;
 create table BorrowerType
 	(type char(10) not null,
