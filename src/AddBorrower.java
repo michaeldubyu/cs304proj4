@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -54,7 +55,7 @@ public class AddBorrower {
 		Button submit = new Button("Submit");
 		insertFrame.add(new JPanel(null)); //to pad the submit button to the right
 		insertFrame.add(submit);
-		
+		insertFrame.setLocationRelativeTo(null);
 		insertFrame.pack();
 		insertFrame.setTitle("Add A Borrower");
 		insertFrame.setVisible(true);
@@ -62,7 +63,24 @@ public class AddBorrower {
 	    submit.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
-	        	
+	        	try{
+		        	BorrowerTable.insertBorrower(bid.getText(), password.getText(), name.getText(), address.getText(),
+		        			phone.getText(),email.getText(), sinstnum.getText(),expirydate.getText(), type.getText());
+	        	}catch(Exception argException){
+	        		final Frame errorFrame = new Frame("Error!");
+	        		Label error = new Label(argException.getMessage());
+	        		errorFrame.add(error);
+	        		errorFrame.pack();
+	        		errorFrame.setVisible(true);
+	        		errorFrame.setAlwaysOnTop(true);
+	        		errorFrame.setLocationRelativeTo(insertFrame);
+	                errorFrame.addWindowListener( new WindowAdapter() {
+	                    public void windowClosing(WindowEvent we) {
+	                
+	                        errorFrame.setVisible(false);
+	                    }
+	                } );
+	        	}
 	        }
 	      });
 		
