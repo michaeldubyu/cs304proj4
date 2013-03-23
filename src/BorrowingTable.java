@@ -9,7 +9,7 @@ public class BorrowingTable {
 	private static final String[] attNames = 
 		{"borid", "bid", "callNumber", "copyNo", "outDate", "inDate"}; 
 	
-	/*
+	/* 
 	 * Used for CheckOutBook for the action of the Clerk to check out a bunch of books for a given user.
 	 * borid is the unique number to log this transaction, not to be confused with bid, the id of the user borrowing
 	 * indate is given, but outdate should be computed dynamically as soon as the item is checked in based on the user's type
@@ -31,6 +31,7 @@ public class BorrowingTable {
 			
 			//get the borrower type
 			rs = s.executeQuery("SELECT * FROM BORROWER WHERE bid = '" + bid + "'");
+			
 			while (rs.next()) {
 				System.out.println(rs.getString("name"));
 				userType = rs.getString("btype");
@@ -51,9 +52,7 @@ public class BorrowingTable {
 			}
 		}catch (NumberFormatException e){
 			throw new IllegalArgumentException("In date is not of valid format - needs to be numbers and nonempty.");				
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		}catch (Exception e) {}
 		
 		if (userType == null) throw new IllegalArgumentException("User does not exist!");
 		
