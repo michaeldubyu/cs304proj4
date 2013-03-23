@@ -59,7 +59,8 @@ public class AddBorrower {
 		insertFrame.pack();
 		insertFrame.setTitle("Add A Borrower");
 		insertFrame.setVisible(true);
-
+		bid.requestFocus();
+		
 	    submit.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
