@@ -1,11 +1,12 @@
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class BorrowerTable {
 	
 	private static Connection con;
 	
-	public static void insertBorrower(String bid, String password, String name, String address, int phone, String email, int sinOrStNo, Date expiryDate, String type)
+	public static void insertBorrower(String bid, String password, String name, String address, String phone, String email, String sinOrStNo, String expiryDate, String type)
 	throws IllegalArgumentException
     {
 	
@@ -32,52 +33,55 @@ public class BorrowerTable {
 	  else
 		  ps.setString(3,name);
 	  
-	  //Set name
-	  if (name.equals(""))
-		  throw new IllegalArgumentException("Invalid name");
+	  //Set address
+	  if (address.equals(""))
+		  ps.setNull(4, java.sql.Types.VARCHAR);
 	  else
-		  ps.setString(3,name);
+		  ps.setString(4,address);
 	  
+	  //Set phone
+	  if (phone.equals(""))
+		  ps.setNull(5, java.sql.Types.INTEGER);  
+	  else if (!phone.matches("^\\d*$"))
+		  throw new IllegalArgumentException("Invalid phone number");
+	  else
+	  {
+		  int p = Integer.parseInt(phone);
+		  ps.setInt(5, p);
+	  }
 	  //Set email
 	  if (!email.matches(".*@*"))
 		  throw new IllegalArgumentException("Invalid email address");
 	  else
 		  ps.setString(6, email);
 	  
-	  
-		  
-	  
-	  
-
-
-	  System.out.print("\nBranch Address: ");
-	  baddr = in.readLine();
-	  
-	  if (baddr.length() == 0)
-          {
-	      ps.setString(3, null);
-	  }
+	  //Set sinOrstNo
+	  if (!sinOrStNo.matches("^\\d*$"))
+		  throw new IllegalArgumentException("Invalid SIN or Student Number");
 	  else
 	  {
-	      ps.setString(3, baddr);
+		  int s = Integer.parseInt(sinOrStNo);
+		  if ((9999999<s)||(s<100000000))
+			  throw new IllegalArgumentException("Invalid SIN or Student Number");
+		  else
+			  ps.setInt(7, s);
 	  }
-	 
-	  System.out.print("\nBranch City: ");
-	  bcity = in.readLine();
-	  ps.setString(4, bcity);
-
-	  System.out.print("\nBranch Phone: ");
-	  String phoneTemp = in.readLine();
-	  if (phoneTemp.length() == 0)
-	  {
-	      ps.setNull(5, java.sql.Types.INTEGER);
-	  }
+	  
+	  //Set Expiry Date
+	  if (!sinOrStNo.matches("^\\d*$"))
+		  throw new IllegalArgumentException("Needs to be UNIX time bro");
 	  else
 	  {
-	      bphone = Integer.parseInt(phoneTemp);
-	      ps.setInt(5, bphone);
+		  int d = Integer.parseInt(sinOrStNo);
+		  ps.setInt(7, d);
 	  }
-
+	  
+	  //Set Type
+	  if (!(type.equals("Faculty"))||(type.equals("Staff"))||(type.equals("Student")))
+		  throw new IllegalArgumentException("Invalid Borrower Type");
+	  else
+		  ps.setString(9, type);
+	  
 	  ps.executeUpdate();
 
 	  // commit work 
@@ -85,10 +89,8 @@ public class BorrowerTable {
 
 	  ps.close();
 	}
-	catch (IOException e)
-	{
-	    System.out.println("IOException!");
-	}
+	
+
 	catch (SQLException ex)
 	{
 	    System.out.println("Message: " + ex.getMessage());
@@ -104,7 +106,88 @@ public class BorrowerTable {
 	    }
 	}
     }
+	/*
+	public static void showBorrowers()
+    {
+		String bid; 
+		String password; 
+		String name; 
+		String address; 
+		int phone; 
+		String email; 
+		int sinOrStNo;
+		Date expiryDate;
+		String type;
+		Statement  stmt;
+		ResultSet  rs;
+		
+		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+	   
+	try
+	{
+	  stmt = con.createStatement();
+
+	  rs = stmt.executeQuery("SELECT * FROM borrowers");
+
+	  // get info on ResultSet
+	  ResultSetMetaData rsmd = rs.getMetaData();
+
+	  // get number of columns
+	  int numCols = rsmd.getColumnCount();
+
+	  System.out.println(" ");
+	  
+
+
+	  while(rs.next())
+	  {
+	      // for display purposes get everything from Oracle 
+	      // as a string
+
+	      // simplified output formatting; truncation may occur
+		  
+		  ArrayList<String> currentBorrower = new ArrayList<String>();
+
+	      bid = rs.getString("bid");
+
+	      currentBorrower.add(bid);
+	      
+	      //Don't print passwords
+	      //password = rs.getString("password");
+	      System.out.printf("%-20.20s", "********");
+
+	      name = rs.getString("name");
+	      if (rs.wasNull())
+	    	  System.out.printf("%-20.20s", " ");
+	      else
+	    	  System.out.printf("%-20.20s", name);
+
+
+	      bcity = rs.getString("branch_city");
+	      System.out.printf("%-15.15s", bcity);
+
+	      bphone = rs.getString("branch_phone");
+	      if (rs.wasNull())
+	      {
+	    	  System.out.printf("%-15.15s\n", " ");
+              }
+	      else
+	      {
+	    	  System.out.printf("%-15.15s\n", bphone);
+	      }      
+	  }
+ 
+	  // close the statement; 
+	  // the ResultSet will also be closed
+	  stmt.close();
+	}
+	catch (SQLException ex)
+	{
+	    System.out.println("Message: " + ex.getMessage());
+	}	
+    }
 	
+    */
 
 
 }
