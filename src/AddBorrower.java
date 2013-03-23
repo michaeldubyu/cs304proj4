@@ -29,8 +29,8 @@ public class AddBorrower {
 		Label addressLabel = new Label("Address :");
 		Label phoneLabel = new Label("Phone :");
 		Label emailLabel = new Label("Email* :");
-		Label sinstnumLabel = new Label("SIN/Student Number :");
-		Label expiryDateLabel = new Label("Expiry Date (UNIX TIME) :");
+		Label sinstnumLabel = new Label("SIN/Student Number* :");
+		Label expiryDateLabel = new Label("Expiry Date (UNIX TIME)* :");
 		Label typeLabel = new Label("Account Type* :");
 
 		//insertFrame.add(bidLabel);
