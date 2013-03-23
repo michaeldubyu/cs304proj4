@@ -50,22 +50,33 @@ public class BookTable {
 			
 			con.commit();
 			
-			/*
+			
 			try
 			{
 			if (!subject1.equals(""))
-			SubjectTable.insertHasSubject(callNumber, subject1);
+			HasSubjectTable.insertHasSubject(callNumber, subject1);
 			if (!subject2.equals(""))
-			SubjectTable.insertHasSubject(callNumber, subject2);
+			HasSubjectTable.insertHasSubject(callNumber, subject2);
 			if (!subject2.equals(""))
-			SubjectTable.insertHasSubject(callNumber, subject3);
-			} catch ()
+			HasSubjectTable.insertHasSubject(callNumber, subject3);
+			} catch (SQLException e1)
+				
+	    		{
+				con.rollback();	
+				throw e1;
+	    		} 
 			
 			
-			*/
+	    		
+			
+			
+			
 		
 		} catch (SQLException e) {
 			e.printStackTrace();
+			
+			//DO SOMETHING WITH THIS EXCEPTION
+			
 		}
 		
 	
