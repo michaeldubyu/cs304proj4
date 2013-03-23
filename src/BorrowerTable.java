@@ -76,7 +76,7 @@ public class BorrowerTable {
 		  }
 		  
 		  //Set Expiry Date
-		  if (!expiryDate.matches("^\\d*$"))
+		  if (!expiryDate.matches("^\\d*$")||expiryDate.equals(""))
 			  throw new IllegalArgumentException("Needs to be UNIX time bro");
 		  else
 		  {
@@ -85,11 +85,13 @@ public class BorrowerTable {
 		  }
 		  
 		  //Set Type
-		  String lc_type = type.toLowerCase();
-		  if (!((lc_type.equals("Faculty"))||(lc_type.equals("Staff"))||(lc_type.equals("Student"))))
+		  String lc_type = type.trim().toLowerCase();
+		  if (! ((lc_type.equals("faculty"))||(lc_type.equals("staff"))||(lc_type.equals("student"))))
 			  throw new IllegalArgumentException("Invalid Borrower Type");
 		  else
 			  ps.setString(9, type);
+		  
+		  System.out.println(ps);
 		  
 		  ps.executeUpdate();
 	
