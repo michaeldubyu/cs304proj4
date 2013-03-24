@@ -7,7 +7,9 @@ public class BorrowingTable {
 	private static Connection con;
 	
 	private static final String[] attNames = 
-		{"borid", "bid", "callNumber", "copyNo", "outDate", "inDate"}; 
+		{"bid", "name", "callNumber", "copyNo", "inDate"}; 
+	
+	private static final long CURRENT_TIME = (System.currentTimeMillis() / 1000L);
 	
 	/* 
 	 * Used for CheckOutBook for the action of the Clerk to check out a bunch of books for a given user.
@@ -104,4 +106,63 @@ public class BorrowingTable {
 		    }
 		}
 	}
+	
+	public static ArrayList<ArrayList<String>> displayOverdueItems()
+	{
+		
+		Statement  stmt;
+		ResultSet  rs;
+		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+		
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT bid, name, callNumber, copyNo, inDate " +
+								   "FROM borrowing, borrower " +
+								   "WHERE borrowing.bid=borrower.bid");
+			
+			 while(rs.next())
+			  {  
+				  
+				  long inDate = Long.valueOf(rs.getString(6)).longValue();
+				  
+				  if (inDate<CURRENT_TIME)
+				  {
+					  ArrayList<String> aBorrowing = new ArrayList<String>();
+					  
+					  for (String anAttribute: attNames)
+						  {
+						  aBorrowing.add(rs.getString(anAttribute));
+					  }
+					  result.add(aBorrowing);
+				  }
+				
+				  
+		
+			  }
+			
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		  
+		
+		
+		
+		
+		
+		return result;
+	}
+	
+	
+	
 }

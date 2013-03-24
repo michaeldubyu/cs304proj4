@@ -18,8 +18,7 @@ public class HasSubjectTable {
 			ps = con.prepareStatement("INSERT INTO hasSubject VALUES (?,?)");
 			ps.setString(1, callNumber);
 			ps.setString(2, subject);
-			
-			
+			ps.executeUpdate();
 			
 		
 		
