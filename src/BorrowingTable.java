@@ -16,12 +16,13 @@ public class BorrowingTable {
 	 * therefore, we need to 1.) ensure bid is valid, then 2.) look up type on bid with the borrower table before we proceed
 	 * with anything further
 	 */
-	public static void insertBorrowing(String bid, String callNumber, String copyNo, String inDate) 
+	public static void insertBorrowing(String bid, String callNumber, String copyNo) 
 			throws IllegalArgumentException
 	{
 		String userType = null;
-		int outDate = 0;
-
+		long inDate = 0;
+		long outDate = System.currentTimeMillis()/1000;
+		
 		if (bid.equals("")) throw new IllegalArgumentException("Borrower ID cannot be empty!");
 		
 		try {
@@ -33,21 +34,19 @@ public class BorrowingTable {
 			rs = s.executeQuery("SELECT * FROM BORROWER WHERE bid = '" + bid + "'");
 			
 			while (rs.next()) {
-				System.out.println(rs.getString("name"));
 				userType = rs.getString("btype").trim().toLowerCase();
 			}
 			
-			//try to cast the indate to a time
-			outDate = Integer.parseInt(inDate);
+			//try to cast L indate to a time
 			switch (userType){
 				case("student"):
-					outDate += 1209600; //2 weeks in seconds we add on
+					inDate = outDate + 1209600; //2 weeks in seconds we add on
 					break;
 				case("faculty"):
-					outDate += 7257600; //12 weeks
+					inDate = outDate + 7257600; //12 weeks
 					break;
 				case("staff"):
-					outDate += 3628800; //6 weeks
+					inDate = outDate + 3628800; //6 weeks
 					break;
 			}
 		}catch (NumberFormatException e){
@@ -78,10 +77,10 @@ public class BorrowingTable {
 		    	ps.setString(3,copyNo);
 		    
 		    //set outDate - it's guaranted to be of an integer type at this point
-			ps.setString(4, Integer.toString(outDate));
+			ps.setString(4, Long.toString(outDate));
 			
 			//set inDate - also guaranteed to be of integer in string format at this point
-			ps.setString(5, inDate);
+			ps.setString(5, Long.toString(inDate));
 			
 			System.out.println(ps);
 			

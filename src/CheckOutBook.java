@@ -29,8 +29,6 @@ public class CheckOutBook {
 		insertFrame.add(callNo);
 		insertFrame.add(copyNoLabel);
 		insertFrame.add(copyNo);
-		insertFrame.add(inDateLabel);
-		insertFrame.add(inDate);
 		
 		Button submit = new Button("Submit");
 		insertFrame.add(new Label("(*)Required fields marked.")); //to pad the submit button to the right
@@ -46,7 +44,7 @@ public class CheckOutBook {
 	          //when the submit button is clicked
 	        	try{
 		        	BorrowingTable.insertBorrowing(bid.getText(), 
-		        			callNo.getText(), copyNo.getText(), inDate.getText());
+		        			callNo.getText(), copyNo.getText());
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");
 	        		Label error = new Label(argException.getMessage());
