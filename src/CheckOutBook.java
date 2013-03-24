@@ -12,14 +12,12 @@ public class CheckOutBook {
 		//input: borid (pkey for the table), bid (the user id), callNumber, copy no, outdate
 		final Frame insertFrame = new Frame();
 		final JTextField bid = new JTextField(20);
-		final JTextField borid = new JTextField(20);
 		final JTextField callNo = new JTextField(20);
 		final JTextField copyNo = new JTextField(20);
 		final JTextField inDate = new JTextField(20);
 		
 		insertFrame.setLayout(new GridLayout(6,2));
 
-		Label boridLabel = new Label("Borrowing Transaction ID* :");
 		Label bidLabel = new Label("Borrower ID* :");
 		Label callNoLabel = new Label("Call No* :");
 		Label copyNoLabel = new Label("Copy No* :");
@@ -27,8 +25,6 @@ public class CheckOutBook {
 
 		insertFrame.add(bidLabel);
 		insertFrame.add(bid);
-		insertFrame.add(boridLabel);
-		insertFrame.add(borid);
 		insertFrame.add(callNoLabel);
 		insertFrame.add(callNo);
 		insertFrame.add(copyNoLabel);
@@ -49,7 +45,7 @@ public class CheckOutBook {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-		        	BorrowingTable.insertBorrowing(borid.getText(), bid.getText(), 
+		        	BorrowingTable.insertBorrowing(bid.getText(), 
 		        			callNo.getText(), copyNo.getText(), inDate.getText());
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");
