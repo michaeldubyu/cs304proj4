@@ -173,15 +173,6 @@ public class BorrowerTable {
 		
 	static void processReturn(String callNo, String copyNo)
 	{
-		/* TODO - modify the following:
-		 * 	-Change book status to 'in'
-		 */
-		try {
-			con = db_helper.connect("ora_i7f7", "a71163091");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
 		ResultSet rs;
 		Statement stmt;
 		PreparedStatement  ps;
@@ -190,16 +181,19 @@ public class BorrowerTable {
 		long curTime = System.currentTimeMillis()/1000;
 		try
 		{
+			con = db_helper.connect("ora_i7f7", "a71163091");
+
 			stmt = con.createStatement();
-			stmt.executeUpdate("UPDATE BookCopy SET status = 'in' WHERE callNumber = " + callNo +
-					" AND copyNo = " + copyNo);
+			int rows = stmt.executeUpdate("UPDATE BookCopy SET status = 'in' WHERE callNumber = '1' and copyNo = '1'");
 			rs = stmt.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo +
 					" AND copyNo = " + copyNo);
+			
+			System.out.println(rows);
+			
 			while(rs.next())
 			{
 				inDate = Long.valueOf(rs.getString("inDate")).longValue();
 				borid = Integer.parseInt(rs.getString("borid"));
-				
 			}
 			
 			if(curTime > inDate)
@@ -216,7 +210,9 @@ public class BorrowerTable {
 				
 				ps.executeUpdate();
 			}
-			con.commit();			
+			con.commit();	
+			con.close();
+			rs.close();
 		} catch (Exception e){e.printStackTrace();}
 		
 	}

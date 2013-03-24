@@ -57,8 +57,8 @@ drop table BookCopy;
 create table BookCopy
 	(callNumber varchar(40) not null,
 	copyNo varchar(10) not null,
-	status char(10) null,
-    constraint BookCopy_pk primary key (callNumber, copyNo)
+	status varchar(10) null
+    constraint HasBook_pk primary key (callNumber, copyNo)
 );
 	
 drop table HoldRequest;
