@@ -170,4 +170,61 @@ public class BorrowerTable {
 		}	
 		return result;
 	    }
+		
+	static void processReturn(String callNo, String copyNo)
+	{
+		/* TODO - modify the following:
+		 * 	-Change book status to 'in'
+		 */
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		ResultSet rs;
+		Statement stmt;
+		PreparedStatement  ps;
+		long inDate = 0;
+		int borid = 0;
+		long curTime = System.currentTimeMillis()/1000;
+		try
+		{
+			stmt = con.createStatement();
+			System.out.println("was BookCopy");
+			stmt.executeQuery("UPDATE BookCopy SET status = 'in' WHERE 'callNumber' = " + callNo +
+					" AND 'copyNo' = " + copyNo);
+			System.out.println("was Borrowing");
+			rs = stmt.executeQuery("SELECT * FROM Borrowing WHERE 'callNumber' = " + callNo +
+					" AND 'copyNo' = " + copyNo);
+			while(rs.next())
+			{
+				inDate = Long.valueOf(rs.getString("inDate")).longValue();
+				borid = Integer.parseInt(rs.getString("borid"));
+				
+			}
+			
+			if(curTime > inDate)
+			{
+				System.out.println("was Fine");
+				ps = con.prepareStatement("INSERT INTO Fine (amount, issuedDate, paidDate, boridId)" + 
+						"VALUES (?,?,?,?)");
+				ps.setInt(1, 5);
+				
+				ps.setString(2, String.valueOf(curTime));
+				
+				ps.setNull(3, java.sql.Types.VARCHAR);
+				
+				ps.setInt(4, borid);
+				
+				ps.execute();
+				
+				con.commit();
+				
+				System.out.println(ps);
+			}
+			
+		} catch (Exception e){e.printStackTrace();}
+		
+	}
 }

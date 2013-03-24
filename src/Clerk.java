@@ -60,7 +60,7 @@ public class Clerk {
 			else if (e.getActionCommand()=="check out"){
 				new CheckOutBook();
 			}else if (e.getActionCommand()=="return"){
-				System.out.println("return");
+				new ProcessRet();
 			}else if (e.getActionCommand()=="check overdues"){
 				System.out.println("check overdues");
 			}

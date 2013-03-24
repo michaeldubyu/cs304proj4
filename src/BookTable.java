@@ -33,7 +33,7 @@ public class BookTable {
 			}
 			copyNumber = rs.getFetchSize() + 1;
 			
-			ps = con.prepareStatement("INSERT INTO BookCopy VALUES (" + callNumber + "," + copyNumber + ",\"available\")");
+			ps = con.prepareStatement("INSERT INTO BookCopy VALUES (" + callNumber + "," + copyNumber + ",\"in\")");
 			
 			System.out.println(ps);
 			  
