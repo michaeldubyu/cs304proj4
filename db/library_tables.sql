@@ -41,19 +41,25 @@ create table Book
 	
 drop table HasAuthor;
 create table HasAuthor
-	(callNumber varchar(40) not null primary key,
-	name char(40) not null primary key);
+	(callNumber varchar(40) not null,
+	name char(40) not null,
+    constraint HasAuthor_pk primary key (callNumber, name)
+);
 	
 drop table HasSubject;
 create table HasSubject
-	(callNumber varchar(40) not null primary key,
-	subject char(20) not null primary key);
+	(callNumber varchar(40) not null,
+	subject char(20) not null,
+    constraint HasSubject_pk primary key (callNumber, subject)
+);
 
 drop table BookCopy;
 create table BookCopy
-	(callNumber varchar(40) not null primary key,
-	copyNo int not null primary key,
-	status char(10) null);
+	(callNumber varchar(40) not null,
+	copyNo int not null,
+	status char(10) null,
+    constraint BookCopy_pk primary key (callNumber, copyNo)
+);
 	
 drop table HoldRequest;
 create table HoldRequest
@@ -77,8 +83,8 @@ CREATE OR REPLACE TRIGGER hold_incr
 	END;
 	/
 
-drop table fine;
-CREATE TABLE fine(
+drop table Fine;
+CREATE TABLE Fine(
         fid int not null primary key,
         amount number(10) not null,
         issuedDate varChar(20) not null,
@@ -92,7 +98,7 @@ CREATE SEQUENCE fid_incr
 
 CREATE OR REPLACE TRIGGER fid_incr
 	BEFORE INSERT
-	ON fine
+	ON Fine
 	REFERENCING NEW AS NEW
 	FOR EACH ROW
 	BEGIN
@@ -100,8 +106,8 @@ CREATE OR REPLACE TRIGGER fid_incr
 	END;
 	/
 
-drop table borrowing;
-CREATE TABLE borrowing(
+drop table Borrowing;
+CREATE TABLE Borrowing(
         borid int not null primary key,
         bid char(8) not null,
         callNumber varChar(20) null,
@@ -116,7 +122,7 @@ CREATE SEQUENCE bor_incr
 
 CREATE OR REPLACE TRIGGER bor_incr
 	BEFORE INSERT
-	ON borrowing
+	ON Borrowing
 	REFERENCING NEW AS NEW
 	FOR EACH ROW
 	BEGIN
@@ -124,14 +130,5 @@ CREATE OR REPLACE TRIGGER bor_incr
 	END;
 	/
 		
-insert into Book
-values('KF8840.F72.1999','0123456789', 'how 2 be a chill bro',
-'Dr. Mike Wu', 'Penguin', '1999');
-
-insert into BookCopy
-values('KF8840.F72.1999',1, 'reserved');
-
-insert into HasAuthor
-values('KF8840.F72.1999','Dr. Mike Wu');
 		
 		
