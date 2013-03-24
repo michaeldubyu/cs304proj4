@@ -83,11 +83,26 @@ CREATE TABLE fine(
         amount number(10) not null,
         issuedDate varChar(20) not null,
         paidDate varChar(20) null,
-        boridId char(8) null);
+        boridId int null);
+		
+drop sequence fid_incr;
+CREATE SEQUENCE fid_incr
+	START WITH 1
+	INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER fid_incr
+	BEFORE INSERT
+	ON fine
+	REFERENCING NEW AS NEW
+	FOR EACH ROW
+	BEGIN
+	SELECT fid_incr.nextval INTO :NEW.fid FROM dual;
+	END;
+	/
 
 drop table borrowing;
 CREATE TABLE borrowing(
-        borid char(8) not null primary key,
+        borid int not null primary key,
         bid char(8) not null,
         callNumber varChar(20) null,
         copyNo varChar(20) null,
