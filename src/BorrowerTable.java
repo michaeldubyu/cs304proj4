@@ -191,12 +191,10 @@ public class BorrowerTable {
 		try
 		{
 			stmt = con.createStatement();
-			System.out.println("was BookCopy");
-			stmt.executeQuery("UPDATE BookCopy SET status = 'in' WHERE 'callNumber' = " + callNo +
-					" AND 'copyNo' = " + copyNo);
-			System.out.println("was Borrowing");
-			rs = stmt.executeQuery("SELECT * FROM Borrowing WHERE 'callNumber' = " + callNo +
-					" AND 'copyNo' = " + copyNo);
+			stmt.executeUpdate("UPDATE BookCopy SET status = 'in' WHERE callNumber = " + callNo +
+					" AND copyNo = " + copyNo);
+			rs = stmt.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo +
+					" AND copyNo = " + copyNo);
 			while(rs.next())
 			{
 				inDate = Long.valueOf(rs.getString("inDate")).longValue();
@@ -206,7 +204,6 @@ public class BorrowerTable {
 			
 			if(curTime > inDate)
 			{
-				System.out.println("was Fine");
 				ps = con.prepareStatement("INSERT INTO Fine (amount, issuedDate, paidDate, boridId)" + 
 						"VALUES (?,?,?,?)");
 				ps.setInt(1, 5);
@@ -217,13 +214,9 @@ public class BorrowerTable {
 				
 				ps.setInt(4, borid);
 				
-				ps.execute();
-				
-				con.commit();
-				
-				System.out.println(ps);
+				ps.executeUpdate();
 			}
-			
+			con.commit();			
 		} catch (Exception e){e.printStackTrace();}
 		
 	}

@@ -29,7 +29,7 @@ public class ProcessRet {
 		insertFrame.add(submit);
 		insertFrame.setLocationRelativeTo(null);
 		insertFrame.pack();
-		insertFrame.setTitle("Check Out A Book");
+		insertFrame.setTitle("Return a Book");
 		insertFrame.setVisible(true);
 		callNo.requestFocus();
 		
