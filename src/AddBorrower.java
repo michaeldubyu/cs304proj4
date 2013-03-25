@@ -70,9 +70,9 @@ public class AddBorrower {
 		        	if (borid == -1){
 		        		throw new Exception("Could not get the ID of the newly added user! Please try again!");
 		        	}else{
-		        		final Frame successFrame = new Frame("Error!");
-		        		Label error = new Label("User successfully added! New user ID : " + borid + ".	");
-		        		successFrame.add(error);
+		        		final Frame successFrame = new Frame("Success!");
+		        		Label success = new Label("User successfully added! New user ID : " + borid + ".	");
+		        		successFrame.add(success);
 		        		successFrame.pack();
 		        		successFrame.setVisible(true);
 		        		successFrame.setAlwaysOnTop(true);

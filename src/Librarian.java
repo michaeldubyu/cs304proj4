@@ -52,7 +52,7 @@ public class Librarian {
 			else if (e.getActionCommand()=="checkout report"){
 				
 			}else if (e.getActionCommand()=="popular report"){
-				
+				new PopularReport();
 			}
 		}
 	}
