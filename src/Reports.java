@@ -27,7 +27,7 @@ public class Reports {
 		{
 		stmt = con.createStatement();
 		
-		rs = stmt.executeQuery("SELECT b1.callNumber, name, COUNT(*) as qty FROM book b1, " +
+		rs = stmt.executeQuery("SELECT b1.callNumber, COUNT(*) as qty FROM book b1, " +
 				"(SELECT * FROM borrowing WHERE outDate >= "+yearStart+
 				" AND inDate <= "+yearEnd+") b2 " +
 				"WHERE b1.callNumber = b2.callNumber "+
@@ -40,7 +40,6 @@ public class Reports {
 			ArrayList<String> aPopularBook = new ArrayList<String>();
 			aPopularBook.add(rs.getString(1));
 			aPopularBook.add(rs.getString(2));
-			aPopularBook.add(rs.getString(3));
 			result.add(aPopularBook);
 		}
 				
