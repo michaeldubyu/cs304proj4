@@ -11,6 +11,56 @@ public class BookTable {
 	private static final String[] attNames = 
 		{"callNumber", "isbn", "title", "mainAuthor", "publisher", "year"};
 	
+	public ArrayList<ArrayList> searchBook(String titleSearch, String authorSearch, String subjectSearch) throws IllegalArgumentException
+	{
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		ArrayList<ArrayList> results = new ArrayList<ArrayList>();
+		ResultSet rs;
+		Statement stmt;
+		try
+		{
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(   "Select * from book b, (SELECT callNumber, count(*) AS qty from ("
+									+ "SELECT * FROM Book b "
+									+ "WHERE b.title LIKE " + titleSearch
+									+ "UNION ALL" 
+									+ "SELECT * FROM Book b "
+									+ "WHERE b.mainAuthor LIKE " + authorSearch + " "
+									+ "OR EXISTS (SELECT * FROM HasAuthor h "
+									+ "WHERE h.callNumber = b.callNumber "
+									+ "AND h.name LIKE " + authorSearch + ")"
+									+ "UNION ALL"
+									+ "SELECT * FROM Book b "
+									+ "WHERE EXISTS (SELECT * FROM HasSubject h WHERE "
+									+ "h.callNumber = b.callNumber "
+									+ "AND h.subject LIKE " + subjectSearch + "))"
+									+ "GROUP BY callNumber ORDER BY qty desc) c where b.callnumber = c.callnumber");
+			
+			int i = 0;
+			while(rs.next())
+			{
+				String callNumber = rs.getString("callNumber");
+				String title = rs.getString("title");
+				String author = rs.getString("mainAuthor");
+				results.get(i).set(0, callNumber);
+				results.get(i).set(1, title);
+				results.get(i).set(2, author);
+				i++;
+			}
+			}catch(SQLException e)
+		{
+			
+			/* TO BE IMPLEMENTED -- Shouldn't appear, but will allocate a response */
+			
+		}
+		
+		return results;
+	}
+	
 	public static void insertCopy(String callNumber, boolean firstBook) throws IllegalArgumentException
 	{
 		try {
