@@ -41,6 +41,7 @@ public class Reports {
 			aPopularBook.add(rs.getString(1));
 			aPopularBook.add(rs.getString(2));
 			result.add(aPopularBook);
+			i++;
 		}
 				
 		
