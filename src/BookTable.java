@@ -51,10 +51,10 @@ public class BookTable {
 				results.get(i).set(2, author);
 				i++;
 			}
-			}catch(SQLException e)
+		}catch(SQLException e)
 		{
 			
-			/* TO BE IMPLEMENTED -- Shouldn't appear, but will allocate a response */
+			e.printStackTrace();
 			
 		}
 		
