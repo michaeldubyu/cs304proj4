@@ -11,11 +11,13 @@ public class BorrowerTable {
 	
 	
 	//Insert a borrower into the table
-	public static void insertBorrower(String password, String name, String address, 
+	//if successful, returns the borrower id, otherwise -1
+	public static int insertBorrower(String password, String name, String address, 
 									  String phone, String email, String sinOrStNo, String expiryDate, 
 									  String type) throws IllegalArgumentException
     {
-	
+		int borid = -1;
+
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
 		} catch (SQLException e) {
@@ -25,100 +27,103 @@ public class BorrowerTable {
 		  
 		try
 		{
-		  ps = con.prepareStatement("INSERT INTO borrower " +
-		  		"(password, name, address, phone, emailAddress, sinOrStNo, expiryDate, btype) " +
-		  		"VALUES (?,?,?,?,?,?,?,?)");
+			  ps = con.prepareStatement("INSERT INTO borrower " +
+			  		"(password, name, address, phone, emailAddress, sinOrStNo, expiryDate, btype) " +
+			  		"VALUES (?,?,?,?,?,?,?,?)");
+			
+			  //Set bid
+			  //ps.setString(1, bid);
+			  
+			  //Set password
+			  if (!((password.matches(".*\\d.*"))&&(!password.matches("^\\d*$"))))
+				  throw new IllegalArgumentException("Password must contain letters and numbers");
+			  if (!((password.length()>=7)&& (password.length())<=13))
+				  throw new IllegalArgumentException("Password must be between 8 and 12 characters");
+			  else
+				  ps.setString(1, password.toString());
+			  
+			  //Set name
+			  if (name.equals(""))
+				  throw new IllegalArgumentException("Invalid name");
+			  else
+				  ps.setString(2,name);
+			  
+			  //Set address
+			  if (address.equals(""))
+				  ps.setNull(3, java.sql.Types.VARCHAR);
+			  else
+				  ps.setString(3,address);
+			  
+			  //Set phone
+			  if (phone.equals(""))
+				  ps.setNull(4, java.sql.Types.INTEGER);  
+			  else if (!phone.matches("^\\d*$"))
+				  throw new IllegalArgumentException("Invalid phone number");
+			  else
+			  {
+				  int p = Integer.parseInt(phone);
+				  ps.setInt(4, p);
+			  }
+			  //Set email
+			  if (!email.matches(".*@.*"))
+				  throw new IllegalArgumentException("Invalid email address");
+			  else
+				  ps.setString(5, email);
+			  
+			  //Set sinOrstNo
+			  if ((!sinOrStNo.matches("^\\d*$"))||sinOrStNo.equals(""))
+				  throw new IllegalArgumentException("Invalid SIN or Student Number");
+			  else
+			  {
+				  int s = Integer.parseInt(sinOrStNo);
+					  ps.setInt(6, s);
+			  }
+			  
+			  //Set Expiry Date
+			  if (!expiryDate.matches("^\\d*$")||expiryDate.equals(""))
+				  throw new IllegalArgumentException("Needs to be UNIX time bro");
+			  else
+			  {
+				  int d = Integer.parseInt(expiryDate);
+				  ps.setInt(7, d);
+			  }
+			  
+			  //Set Type
+			  String lc_type = type.trim().toLowerCase();
+			  if (! ((lc_type.equals("faculty"))||(lc_type.equals("staff"))||(lc_type.equals("student"))))
+				  throw new IllegalArgumentException("Invalid Borrower Type");
+			  else
+				  ps.setString(8, type);
+			  
+			  System.out.println(ps);
+			  
+			  ps.executeUpdate();
+			  ps.close();
+			  
+			  Statement s = con.createStatement();
+			  ResultSet rs2 = s.executeQuery("SELECT bid FROM borrower WHERE password = '" + password + "' AND emailaddress = '" + email + "'");
+			  while (rs2.next()) borid = Integer.parseInt(rs2.getString("bid"));
+	
+			  // commit work 
+			  con.commit();
 		
-		  //Set bid
-		  //ps.setString(1, bid);
-		  
-		  //Set password
-		  if (!((password.matches(".*\\d.*"))&&(!password.matches("^\\d*$"))))
-			  throw new IllegalArgumentException("Password must contain letters and numbers");
-		  if (!((password.length()>=7)&& (password.length())<=13))
-			  throw new IllegalArgumentException("Password must be between 8 and 12 characters");
-		  else
-			  ps.setString(1, password.toString());
-		  
-		  //Set name
-		  if (name.equals(""))
-			  throw new IllegalArgumentException("Invalid name");
-		  else
-			  ps.setString(2,name);
-		  
-		  //Set address
-		  if (address.equals(""))
-			  ps.setNull(3, java.sql.Types.VARCHAR);
-		  else
-			  ps.setString(3,address);
-		  
-		  //Set phone
-		  if (phone.equals(""))
-			  ps.setNull(4, java.sql.Types.INTEGER);  
-		  else if (!phone.matches("^\\d*$"))
-			  throw new IllegalArgumentException("Invalid phone number");
-		  else
-		  {
-			  int p = Integer.parseInt(phone);
-			  ps.setInt(4, p);
-		  }
-		  //Set email
-		  if (!email.matches(".*@.*"))
-			  throw new IllegalArgumentException("Invalid email address");
-		  else
-			  ps.setString(5, email);
-		  
-		  //Set sinOrstNo
-		  if ((!sinOrStNo.matches("^\\d*$"))||sinOrStNo.equals(""))
-			  throw new IllegalArgumentException("Invalid SIN or Student Number");
-		  else
-		  {
-			  int s = Integer.parseInt(sinOrStNo);
-				  ps.setInt(6, s);
-		  }
-		  
-		  //Set Expiry Date
-		  if (!expiryDate.matches("^\\d*$")||expiryDate.equals(""))
-			  throw new IllegalArgumentException("Needs to be UNIX time bro");
-		  else
-		  {
-			  int d = Integer.parseInt(expiryDate);
-			  ps.setInt(7, d);
-		  }
-		  
-		  //Set Type
-		  String lc_type = type.trim().toLowerCase();
-		  if (! ((lc_type.equals("faculty"))||(lc_type.equals("staff"))||(lc_type.equals("student"))))
-			  throw new IllegalArgumentException("Invalid Borrower Type");
-		  else
-			  ps.setString(8, type);
-		  
-		  System.out.println(ps);
-		  
-		  ps.executeUpdate();
-	
-		  // commit work 
-		  con.commit();
-	
-		  ps.close();
-		}
-		
-	
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
-		    try 
-		    {
-			// undo the insert
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-		}
-	    }
+			}
+			catch (SQLException ex)
+			{
+			    System.out.println("Message: " + ex.getMessage());
+			    try 
+			    {
+					// undo the insert
+					con.rollback();	
+			    }
+			    catch (SQLException ex2)
+			    {
+					System.out.println("Message: " + ex2.getMessage());
+					System.exit(-1);
+			    }
+			}
+		return borid;
+	}
 	
 		//Display all borrowers in the database
 		public static ArrayList<ArrayList<String>> showBorrowers()
@@ -171,6 +176,9 @@ public class BorrowerTable {
 		return result;
 	    }
 		
+	/*
+	 * Processes a book return.
+	 */
 	static void processReturn(String callNo, String copyNo)
 	{
 		ResultSet rs;
@@ -184,12 +192,10 @@ public class BorrowerTable {
 			con = db_helper.connect("ora_i7f7", "a71163091");
 
 			stmt = con.createStatement();
-			int rows = stmt.executeUpdate("UPDATE BookCopy SET status = 'in' WHERE callNumber = '1' and copyNo = '1'");
+			stmt.execute("UPDATE BookCopy SET status = 'in' WHERE callNumber = '1' and copyNo = '1'");
 			rs = stmt.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo +
 					" AND copyNo = " + copyNo);
-			
-			System.out.println(rows);
-			
+						
 			while(rs.next())
 			{
 				inDate = Long.valueOf(rs.getString("inDate")).longValue();

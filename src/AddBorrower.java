@@ -65,8 +65,25 @@ public class AddBorrower {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-		        	BorrowerTable.insertBorrower(password.getText(), name.getText(), address.getText(),
+		        	int borid = BorrowerTable.insertBorrower(password.getText(), name.getText(), address.getText(),
 		        			phone.getText(),email.getText(), sinstnum.getText(),expirydate.getText(), type.getText());
+		        	if (borid == -1){
+		        		throw new Exception("Could not get the ID of the newly added user! Please try again!");
+		        	}else{
+		        		final Frame successFrame = new Frame("Error!");
+		        		Label error = new Label("User successfully added! New user ID : " + borid + ".");
+		        		successFrame.add(error);
+		        		successFrame.pack();
+		        		successFrame.setVisible(true);
+		        		successFrame.setAlwaysOnTop(true);
+		        		successFrame.setLocationRelativeTo(insertFrame);
+		                successFrame.addWindowListener( new WindowAdapter() {
+		                    public void windowClosing(WindowEvent we) {
+		                
+		                        successFrame.setVisible(false);
+		                    }
+		                } );
+		        	}
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");
 	        		Label error = new Label(argException.getMessage());
