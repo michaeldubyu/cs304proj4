@@ -27,7 +27,7 @@ public class Reports {
 		{
 		stmt = con.createStatement();
 		
-		rs = stmt.executeQuery("SELECT callNumber, name, COUNT(*) as qty FROM book b1, " +
+		rs = stmt.executeQuery("SELECT b1.callNumber, name, COUNT(*) as qty FROM book b1, " +
 				"(SELECT * FROM borrowing WHERE outDate >= "+yearStart+
 				" AND inDate <= "+yearEnd+") b2 " +
 				"WHERE b1.callNumber = b2.callNumber "+
