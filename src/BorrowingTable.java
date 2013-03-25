@@ -17,13 +17,15 @@ public class BorrowingTable {
 	 * indate is given, but outdate should be computed dynamically as soon as the item is checked in based on the user's type
 	 * therefore, we need to 1.) ensure bid is valid, then 2.) look up type on bid with the borrower table before we proceed
 	 * with anything further
+	 * returns the transaction id, -1 if it was not successful
 	 */
-	public static void insertBorrowing(String bid, String callNumber, String copyNo) 
+	public static int insertBorrowing(String bid, String callNumber, String copyNo) 
 			throws IllegalArgumentException
 	{
 		String userType = null;
 		long inDate = 0;
 		long outDate = System.currentTimeMillis()/1000;
+		int transID = -1;
 		
 		if (bid.equals("")) throw new IllegalArgumentException("Borrower ID cannot be empty!");
 		
@@ -83,10 +85,14 @@ public class BorrowingTable {
 			
 			//set inDate - also guaranteed to be of integer in string format at this point
 			ps.setString(5, Long.toString(inDate));
-			
-			System.out.println(ps);
-			
+						
 			ps.executeUpdate();
+			
+			Statement s = con.createStatement();
+			ResultSet rs = s.executeQuery("SELECT borid FROM borrowing WHERE bid = '" + bid + "' AND callnumber = '" + callNumber +
+										"' AND indate = '" + inDate + "'");
+			while (rs.next()) transID = Integer.parseInt(rs.getString("borid"));
+			
 			con.commit();
 			con.close();
 		}
@@ -105,6 +111,7 @@ public class BorrowingTable {
 				System.exit(-1);
 		    }
 		}
+		return transID;
 	}
 	
 	public static ArrayList<ArrayList<String>> displayOverdueItems()

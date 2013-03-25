@@ -43,8 +43,20 @@ public class CheckOutBook {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-		        	BorrowingTable.insertBorrowing(bid.getText(), 
+		        	int transID = BorrowingTable.insertBorrowing(bid.getText(), 
 		        			callNo.getText(), copyNo.getText());
+		        	final Frame successFrame = new Frame("Success!");
+	        		Label success = new Label("Check out successful! Transaction ID : " + transID + ".");
+	        		successFrame.add(success);
+	        		successFrame.pack();
+	        		successFrame.setVisible(true);
+	        		successFrame.setAlwaysOnTop(true);
+	        		successFrame.setLocationRelativeTo(insertFrame);
+	                successFrame.addWindowListener( new WindowAdapter() {
+	                    public void windowClosing(WindowEvent we) {
+	                        successFrame.setVisible(false);
+	                    }
+	                } );
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");
 	        		Label error = new Label(argException.getMessage());
