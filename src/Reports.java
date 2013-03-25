@@ -31,7 +31,7 @@ public class Reports {
 				"(SELECT * FROM borrowing WHERE outDate >= "+yearStart+
 				" AND inDate <= "+yearEnd+") b2 " +
 				"WHERE b1.callNumber = b2.callNumber "+
-				"GROUP BY callNumber ORDER BY qty DESC");
+				"GROUP BY b1.callNumber ORDER BY qty DESC");
 		
 		int i = 0;
 		
