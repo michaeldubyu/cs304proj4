@@ -11,7 +11,7 @@ public class BookTable {
 	private static final String[] attNames = 
 		{"callNumber", "isbn", "title", "mainAuthor", "publisher", "year"};
 	
-	public ArrayList<ArrayList> searchBook(String titleSearch, String authorSearch, String subjectSearch) throws IllegalArgumentException
+	public static ArrayList<ArrayList> searchBook(String titleSearch, String authorSearch, String subjectSearch) throws IllegalArgumentException
 	{
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
