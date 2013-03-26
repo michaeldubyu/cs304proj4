@@ -193,7 +193,8 @@ public class BorrowerTable {
 
 			stmt = con.createStatement();
 			stmt.execute("UPDATE BookCopy SET status = 'in' WHERE callNumber = '1' and copyNo = '1'");
-			rs = stmt.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo +
+			Statement s2 = con.createStatement();
+			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo +
 					" AND copyNo = " + copyNo);
 						
 			while(rs.next())
