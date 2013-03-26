@@ -54,13 +54,13 @@ public class PopularReport {
 	        		final Frame successFrame = new Frame("Results");
 
 	        		//callnumber, name, count
-	        		Object rowData[][] = new Object[result.size()][2];
+	        		Object rowData[][] = new Object[result.size()][3];
 	        		int i = 0;
 	        		for (ArrayList<String> s:result){
 	        			rowData[i] = s.toArray();
 	        			i++;
 	        		}
-	        		Object columnNames[] = { "Call Number", "Count"};
+	        		Object columnNames[] = { "Title", "Call Number", "Count"};
 	        		JTable table = new JTable(rowData, columnNames);
 
 	        		JScrollPane scroll = new JScrollPane(table);
