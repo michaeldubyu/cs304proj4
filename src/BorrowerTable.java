@@ -236,9 +236,9 @@ public class BorrowerTable {
 		} catch (Exception e){e.printStackTrace();}
 		
 	}
-	public int placeHold(int callNumber, int copyNumber, String bid) throws IllegalArgumentException
+	public int placeHold(int callNumber, String bid) throws IllegalArgumentException
 	{
-		int hid = 0;
+		int hid = -1;
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
 		} catch (SQLException e) {
