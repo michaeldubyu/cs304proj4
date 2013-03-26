@@ -5,6 +5,12 @@ public class Reports {
 	
 	private static Connection con;
 	
+	
+	/*
+	 * Generate a report with the most popular items in a given year. The librarian provides 
+	 * a year and a number n. The system lists out the top n books that where borrowed the 
+	 * most times during that year. The books are ordered by the number of times they were borrowed.
+	*/
 	public static ArrayList<ArrayList<String>> mostPopularBooks(String year, String quantity) throws IllegalArgumentException
 	{
 		int quantityNumber = Integer.parseInt(quantity);
@@ -53,8 +59,57 @@ public class Reports {
 		
 	}
 	
+	/*
+	 * Generate a report with all the books that have been checked out. For each book the report
+	 * shows the date it was checked out and the due date. The system flags the items that are 
+	 * overdue. The items are ordered by the book call number.  If a subject is provided the report 
+	 * lists only books related to that subject, otherwise all the books that are out are listed by 
+	 * the report.
+	*/
 	
-	
-	
+	public static ArrayList<ArrayList<String>> lentItemsReport(String subject)
+	{
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		Statement  stmt;
+		ResultSet  rs;
+		
+		try {
+			
+			if (subject.equals(""))
+			{
+			
+				stmt = con.createStatement();
+				rs = stmt.executeQuery("SELECT * FROM borrowing ORDER BY callNumber ASC");
+				
+				while(rs.next())
+				{
+					
+					
+					
+				}
+				
+			
+			
+			
+			}
+			
+			
+			
+			
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+	}
 	
 }
