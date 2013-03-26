@@ -4,32 +4,32 @@ import java.awt.event.*;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class ProcessRet {
+public class processHold {
 
-	public ProcessRet(){
+	public processHold(){
 		
 		//a form for checking out books
 		//input: borid (pkey for the table), bid (the user id), callNumber, copy no, outdate
 		final Frame insertFrame = new Frame();
 		final JTextField callNo = new JTextField(20);
-		final JTextField copyNo = new JTextField(20);
+		final JTextField bid = new JTextField(20);
 		
 		insertFrame.setLayout(new GridLayout(3,2));
 
 		Label callNoLabel = new Label("Call No* :");
-		Label copyNoLabel = new Label("Copy No* :");
+		Label bidLabel = new Label("Borrower ID* :");
 
 		insertFrame.add(callNoLabel);
 		insertFrame.add(callNo);
-		insertFrame.add(copyNoLabel);
-		insertFrame.add(copyNo);
+		insertFrame.add(bidLabel);
+		insertFrame.add(bid);
 		
 		Button submit = new Button("Submit");
 		insertFrame.add(new Label("(*)Required fields marked.")); //to pad the submit button to the right
 		insertFrame.add(submit);
 		insertFrame.setLocationRelativeTo(null);
 		insertFrame.pack();
-		insertFrame.setTitle("Return a Book");
+		insertFrame.setTitle("Request a hold");
 		insertFrame.setVisible(true);
 		callNo.requestFocus();
 		
@@ -37,24 +37,7 @@ public class ProcessRet {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-	        		int fine = BorrowerTable.processReturn(callNo.getText(), copyNo.getText());
-	        		final Frame fineFrame = new Frame("Book Returns.");
-	        		String msg;
-	        		if (fine==1) msg = "This book was late! A fine has been applied.";
-	        		else msg = "Book successfully returned.";
-
-	        		Label error = new Label(msg);
-	        		fineFrame.add(error);
-	        		fineFrame.pack();
-	        		fineFrame.setVisible(true);
-	        		fineFrame.setAlwaysOnTop(true);
-	        		fineFrame.setLocationRelativeTo(insertFrame);
-	                fineFrame.addWindowListener( new WindowAdapter() {
-	                    public void windowClosing(WindowEvent we) {
-	                        fineFrame.setVisible(false);
-	                    }
-	                } );	
-	        		
+	        		BorrowerTable.placeHold(callNo.getText(), bid.getText());
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");
 	        		Label error = new Label(argException.getMessage());

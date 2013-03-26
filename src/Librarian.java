@@ -3,6 +3,9 @@ import java.awt.event.*;
 
 public class Librarian {
 
+	private Frame mainFrame;
+	public boolean addHasBeenCalled = false;
+
 	/**
 	 * Instantiate the Clerk sub menus and structure.
 	 */
@@ -30,7 +33,7 @@ public class Librarian {
 		genPopularReport.setActionCommand("popular report");
 		genPopularReport.addActionListener(al);
 		librarianFrame.add(genPopularReport);
-		
+		mainFrame = librarianFrame;
 		librarianFrame.pack();
 		librarianFrame.setLocationRelativeTo(m);
         librarianFrame.addWindowListener( new WindowAdapter() {
@@ -44,10 +47,12 @@ public class Librarian {
 
 	class MyActionListener implements ActionListener{
 
+
 		public void actionPerformed(ActionEvent e) {	
 			//wait 10 seconds until timeout
-			if (e.getActionCommand()=="add book"){
-				
+			if (e.getActionCommand()=="add book" && !addHasBeenCalled){
+				new AddBook(mainFrame);
+				addHasBeenCalled = true;
 			}
 			else if (e.getActionCommand()=="checkout report"){
 				new BorrowedReport();

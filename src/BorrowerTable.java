@@ -177,25 +177,31 @@ public class BorrowerTable {
 	    }
 		
 	/*
-	 * Processes a book return.
+	 * Processes a book return. 0 is returned if the book is applied on time. 1 is returned if a fine was applied.
 	 */
-	static void processReturn(String callNo, String copyNo)
+	static int processReturn(String callNo, String copyNo)
 	{
-		ResultSet rs;
-		Statement stmt;
-		PreparedStatement  ps;
+
 		long inDate = 0;
 		int borid = 0;
 		long curTime = System.currentTimeMillis()/1000;
 		try
 		{
+			ResultSet rs;
+			Statement s2;
+			PreparedStatement  ps;
+			PreparedStatement ps3;
+			
 			con = db_helper.connect("ora_i7f7", "a71163091");
 
-			stmt = con.createStatement();
-			stmt.execute("UPDATE BookCopy SET status = 'in' WHERE callNumber = '1' and copyNo = '1'");
-			Statement s2 = con.createStatement();
-			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo +
-					" AND copyNo = " + copyNo);
+			ps3 = con.prepareStatement("UPDATE BOOKCOPY SET STATUS = ? WHERE CALLNUMBER = ? AND COPYNO = ?");
+			ps3.setString(1, "in");
+			ps3.setString(2, callNo);
+			ps3.setString(3, copyNo);
+			ps3.executeUpdate();
+			
+  			s2 = con.createStatement();
+			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo + " AND copyNo = " + copyNo);
 						
 			while(rs.next())
 			{
@@ -216,16 +222,21 @@ public class BorrowerTable {
 				ps.setInt(4, borid);
 				
 				ps.executeUpdate();
+				con.commit();	
+				con.close();
+				
+				return 1;
 			}
-			con.commit();	
-			con.close();
-			rs.close();
+ 
+
 		} catch (Exception e){e.printStackTrace();}
+		return 0;
+
 		
 	}
-	public int placeHold(int callNumber, int copyNumber, String bid) throws IllegalArgumentException
+	public static int placeHold(String string, String bid) throws IllegalArgumentException
 	{
-		int hid = 0;
+		int hid = -1;
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
 		} catch (SQLException e) {
@@ -239,7 +250,7 @@ public class BorrowerTable {
 		
 		try{
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT COUNT(*) AS numin FROM BookCopy WHERE callNumber = '" + callNumber + "' AND status = 'in'");
+			rs = stmt.executeQuery("SELECT COUNT(*) AS numin FROM BookCopy WHERE callNumber = '" + string + "' AND status = 'in'");
 			rs.next();
 			if(rs.getInt("numin") > 0)
 			{
@@ -248,7 +259,7 @@ public class BorrowerTable {
 			rs = stmt.executeQuery("SELECT Count(*) FROM HoldRequest AS tSize");
 			rs.next();
 			hid = rs.getInt("tSize") + 1;
-			rs = stmt.executeQuery("INSERT INTO HoldRequest VALUES ('" + hid + "','" + bid + "','" + callNumber + "','" + date + "')");
+			rs = stmt.executeQuery("INSERT INTO HoldRequest VALUES ('" + hid + "','" + bid + "','" + string + "','" + date + "')");
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
