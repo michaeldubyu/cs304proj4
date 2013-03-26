@@ -27,18 +27,18 @@ public class BookTable {
 			rs = stmt.executeQuery(   "Select * from book b, (SELECT callNumber, count(*) AS qty from ("
 									+ "SELECT * FROM Book b "
 									+ "WHERE b.title LIKE '" + titleSearch
-									+ "'UNION ALL" 
+									+ "' UNION ALL " 
 									+ "SELECT * FROM Book b "
 									+ "WHERE b.mainAuthor LIKE '" + authorSearch + "' "
 									+ "OR EXISTS (SELECT * FROM HasAuthor h "
 									+ "WHERE h.callNumber = b.callNumber "
 									+ "AND h.name LIKE '" + authorSearch + "')"
-									+ "UNION ALL"
+									+ " UNION ALL "
 									+ "SELECT * FROM Book b "
 									+ "WHERE EXISTS (SELECT * FROM HasSubject h WHERE "
 									+ "h.callNumber = b.callNumber "
 									+ "AND h.subject LIKE '" + subjectSearch + "'))"
-									+ "GROUP BY callNumber ORDER BY qty desc) c where b.callnumber = c.callnumber");
+									+ " GROUP BY callNumber ORDER BY qty desc) c where b.callnumber = c.callnumber");
 			
 			int i = 0;
 			while(rs.next())
