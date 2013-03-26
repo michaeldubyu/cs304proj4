@@ -177,9 +177,9 @@ public class BorrowerTable {
 	    }
 		
 	/*
-	 * Processes a book return.
+	 * Processes a book return. 0 is returned if the book is applied on time. 1 is returned if a fine was applied.
 	 */
-	static void processReturn(String callNo, String copyNo)
+	static int processReturn(String callNo, String copyNo)
 	{
 
 		long inDate = 0;
@@ -222,12 +222,16 @@ public class BorrowerTable {
 				ps.setInt(4, borid);
 				
 				ps.executeUpdate();
+				con.commit();	
+				con.close();
+				
+				return 1;
 			}
  
-			
-			con.commit();	
-			con.close();
+
 		} catch (Exception e){e.printStackTrace();}
+		return 0;
+
 		
 	}
 	public int placeHold(int callNumber, String bid) throws IllegalArgumentException
