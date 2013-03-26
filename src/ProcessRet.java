@@ -37,7 +37,24 @@ public class ProcessRet {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-	        		BorrowerTable.processReturn(callNo.getText(), copyNo.getText());
+	        		int fine = BorrowerTable.processReturn(callNo.getText(), copyNo.getText());
+	        		final Frame fineFrame = new Frame("Book Returns.");
+	        		String msg;
+	        		if (fine==1) msg = "This book was late! A fine has been applied.";
+	        		else msg = "Book successfully returned.";
+
+	        		Label error = new Label(msg);
+	        		fineFrame.add(error);
+	        		fineFrame.pack();
+	        		fineFrame.setVisible(true);
+	        		fineFrame.setAlwaysOnTop(true);
+	        		fineFrame.setLocationRelativeTo(insertFrame);
+	                fineFrame.addWindowListener( new WindowAdapter() {
+	                    public void windowClosing(WindowEvent we) {
+	                        fineFrame.setVisible(false);
+	                    }
+	                } );	
+	        		
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");
 	        		Label error = new Label(argException.getMessage());
