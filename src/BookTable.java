@@ -46,8 +46,10 @@ public class BookTable {
 				String callNumber = rs.getString("callNumber");
 				ResultSet inout;
 				inout = stmt.executeQuery("select count(*) as numin from bookcopy where callnumber = '" + callNumber + "' AND status = 'in'");
+				inout.next();
 				String numin = inout.getString("numin");
 				inout = stmt.executeQuery("select count(*) as numout from bookcopy where callnumber = '" + callNumber + "' AND status = 'out'");
+				inout.next();
 				String numout = inout.getString("numout");
 				String title = rs.getString("title");
 				String author = rs.getString("mainAuthor");
