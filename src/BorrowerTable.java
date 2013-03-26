@@ -190,21 +190,15 @@ public class BorrowerTable {
 			ResultSet rs;
 			Statement s2;
 			PreparedStatement  ps;
-			PreparedStatement  ps2;
 			PreparedStatement ps3;
 			
 			con = db_helper.connect("ora_i7f7", "a71163091");
 
-			ps3 = con.prepareStatement("DELETE FROM BOOKCOPY WHERE CALLNUMBER = ? AND COPYNO = ?");
-			ps3.setString(1, callNo);
-			ps3.setString(2, copyNo);
+			ps3 = con.prepareStatement("UPDATE BOOKCOPY SET STATUS = ? WHERE CALLNUMBER = ? AND COPYNO = ?");
+			ps3.setString(1, "in");
+			ps3.setString(2, callNo);
+			ps3.setString(3, copyNo);
 			ps3.executeUpdate();
-			
-			ps2 = con.prepareStatement("INSERT INTO bookcopy (callnumber,copyno,status) VALUES (?,?,?)");
-			ps2.setString(1, callNo);
-			ps2.setString(2, copyNo);
-			ps2.setString(3, "in");
-			ps2.executeUpdate();
 			
   			s2 = con.createStatement();
 			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo + " AND copyNo = " + copyNo);
@@ -236,7 +230,7 @@ public class BorrowerTable {
 		} catch (Exception e){e.printStackTrace();}
 		
 	}
-	public int placeHold(int callNumber, int copyNumber, String bid) throws IllegalArgumentException
+	public int placeHold(int callNumber, String bid) throws IllegalArgumentException
 	{
 		int hid = 0;
 		try {
