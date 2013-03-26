@@ -26,18 +26,18 @@ public class BookTable {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(   "Select d.callNumber, d.title, d.mainAuthor, qty from book d, (SELECT callNumber, count(*) AS qty from ("
 									+ "SELECT * FROM Book b "
-									+ "WHERE b.title LIKE '" + titleSearch
-									+ "' UNION ALL " 
+									+ "WHERE b.title LIKE '%" + titleSearch
+									+ "%' UNION ALL " 
 									+ "SELECT * FROM Book b "
-									+ "WHERE b.mainAuthor LIKE '" + authorSearch + "' "
+									+ "WHERE b.mainAuthor LIKE '%" + authorSearch + "%' "
 									+ "OR EXISTS (SELECT * FROM HasAuthor h "
 									+ "WHERE h.callNumber = b.callNumber "
-									+ "AND h.name LIKE '" + authorSearch + "')"
+									+ "AND h.name LIKE '%" + authorSearch + "%')"
 									+ " UNION ALL "
 									+ "SELECT * FROM Book b "
 									+ "WHERE EXISTS (SELECT * FROM HasSubject h WHERE "
 									+ "h.callNumber = b.callNumber "
-									+ "AND h.subject LIKE '" + subjectSearch + "'))"
+									+ "AND h.subject LIKE '%" + subjectSearch + "%'))"
 									+ " GROUP BY callNumber ORDER BY qty desc) c where d.callnumber = c.callnumber");
 			
 			int i = 0;
