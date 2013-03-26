@@ -16,7 +16,7 @@ public class BorrowedReport {
 
 	public BorrowedReport(){
 			
-			final Frame searchFrame = new Frame("View Books on Loan");
+			final Frame searchFrame = new Frame("Books on Loan");
 			final JTextField title = new JTextField(20);
 			final JTextField author = new JTextField(20);
 			final JTextField subject = new JTextField(20);

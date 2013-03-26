@@ -20,13 +20,13 @@ public class Librarian {
 
 
 		librarianFrame.add(addBook);		
-		genCheckOutReport = new Button("Generate a Checkout Report");
+		genCheckOutReport = new Button("Generate a Report of Books on Loan");
 		genCheckOutReport.setActionCommand("checkout report");
 		genCheckOutReport.addActionListener(al);
 
 
 		librarianFrame.add(genCheckOutReport);
-		genPopularReport = new Button("Generate a Popular Book Report");
+		genPopularReport = new Button("Generate a Report of Popular Books");
 		genPopularReport.setActionCommand("popular report");
 		genPopularReport.addActionListener(al);
 		librarianFrame.add(genPopularReport);
@@ -50,7 +50,7 @@ public class Librarian {
 				
 			}
 			else if (e.getActionCommand()=="checkout report"){
-				
+				new BorrowedReport();
 			}else if (e.getActionCommand()=="popular report"){
 				new PopularReport();
 			}
