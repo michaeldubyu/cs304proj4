@@ -53,7 +53,7 @@ public class Borrower {
 		public void actionPerformed(ActionEvent e) {	
 			//wait 10 seconds until timeout
 			if (e.getActionCommand()=="search"){
-
+				new SearchBook();
 			}
 			else if (e.getActionCommand()=="check account"){
 

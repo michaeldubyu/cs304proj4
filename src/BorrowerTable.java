@@ -181,21 +181,33 @@ public class BorrowerTable {
 	 */
 	static void processReturn(String callNo, String copyNo)
 	{
-		ResultSet rs;
-		Statement stmt;
-		PreparedStatement  ps;
+
 		long inDate = 0;
 		int borid = 0;
 		long curTime = System.currentTimeMillis()/1000;
 		try
 		{
+			ResultSet rs;
+			Statement s2;
+			PreparedStatement  ps;
+			PreparedStatement  ps2;
+			PreparedStatement ps3;
+			
 			con = db_helper.connect("ora_i7f7", "a71163091");
 
-			stmt = con.createStatement();
-			stmt.execute("UPDATE BookCopy SET status = 'in' WHERE callNumber = '1' and copyNo = '1'");
-			Statement s2 = con.createStatement();
-			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo +
-					" AND copyNo = " + copyNo);
+			ps3 = con.prepareStatement("DELETE FROM BOOKCOPY WHERE CALLNUMBER = ? AND COPYNO = ?");
+			ps3.setString(1, callNo);
+			ps3.setString(2, copyNo);
+			ps3.executeUpdate();
+			
+			ps2 = con.prepareStatement("INSERT INTO bookcopy (callnumber,copyno,status) VALUES (?,?,?)");
+			ps2.setString(1, callNo);
+			ps2.setString(2, copyNo);
+			ps2.setString(3, "in");
+			ps2.executeUpdate();
+			
+  			s2 = con.createStatement();
+			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo + " AND copyNo = " + copyNo);
 						
 			while(rs.next())
 			{
@@ -217,9 +229,10 @@ public class BorrowerTable {
 				
 				ps.executeUpdate();
 			}
+ 
+			
 			con.commit();	
 			con.close();
-			rs.close();
 		} catch (Exception e){e.printStackTrace();}
 		
 	}

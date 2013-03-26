@@ -153,24 +153,19 @@ public class BookTable {
 			
 			try
 			{
-			if (!subject1.equals(""))
-			HasSubjectTable.insertHasSubject(callNumber, subject1);
-			if (!subject2.equals(""))
-			HasSubjectTable.insertHasSubject(callNumber, subject2);
-			if (!subject2.equals(""))
-			HasSubjectTable.insertHasSubject(callNumber, subject3);
-			} catch (SQLException e1)
-				
-	    		{
+				if (!subject1.equals(""))
+					HasSubjectTable.insertHasSubject(callNumber, subject1);
+				if (!subject2.equals(""))
+					HasSubjectTable.insertHasSubject(callNumber, subject2);
+				if (!subject2.equals(""))
+					HasSubjectTable.insertHasSubject(callNumber, subject3);
+			} catch (SQLException e1){
 				con.rollback();	
 				throw e1;
-	    		} 
+	    	} 
 			
 			insertCopy(callNumber, true);
-	    		
-			
-			
-			
+	    
 		
 		} catch (SQLException e) {
 			e.printStackTrace();
