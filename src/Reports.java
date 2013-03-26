@@ -84,7 +84,7 @@ public class Reports {
 	 * 
 	*/
 	
-	public static ArrayList<ArrayList<String>> lentItemsReport(String subject)
+	public static ArrayList<ArrayList<String>> borrowedItemsReport(String subject)
 	{
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
