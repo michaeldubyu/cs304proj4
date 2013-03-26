@@ -236,4 +236,36 @@ public class BorrowerTable {
 		} catch (Exception e){e.printStackTrace();}
 		
 	}
+	public int placeHold(int callNumber, int copyNumber, String bid) throws IllegalArgumentException
+	{
+		int hid = 0;
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		ResultSet rs;
+		Statement stmt;
+		PreparedStatement  ps;
+		long date = System.currentTimeMillis()/1000;
+		
+		try{
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT COUNT(*) AS numin FROM BookCopy WHERE callNumber = '" + callNumber + "' AND status = 'in'");
+			rs.next();
+			if(rs.getInt("numin") > 0)
+			{
+				throw new IllegalArgumentException("There are currently copies of the book in");
+			}
+			rs = stmt.executeQuery("SELECT Count(*) FROM HoldRequest AS tSize");
+			rs.next();
+			hid = rs.getInt("tSize") + 1;
+			rs = stmt.executeQuery("INSERT INTO HoldRequest VALUES ('" + hid + "','" + bid + "','" + callNumber + "','" + date + "')");
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return hid;
+	}
 }

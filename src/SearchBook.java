@@ -47,7 +47,7 @@ public class SearchBook {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-	        		ArrayList<ArrayList> result = BookTable.searchBook(title.getText(),author.getText(),subject.getText());
+	        		ArrayList<ArrayList<String>> result = BookTable.searchBook(title.getText(),author.getText(),subject.getText());
 	        		if (result.size()==0) throw new Exception("There were no results for your query. Please try again.");
 	        		
 	        		final Frame successFrame = new Frame("Results");

@@ -11,20 +11,20 @@ public class BookTable {
 	private static final String[] attNames = 
 		{"callNumber", "isbn", "title", "mainAuthor", "publisher", "year"};
 	
-	public static ArrayList<ArrayList> searchBook(String titleSearch, String authorSearch, String subjectSearch) throws IllegalArgumentException
+	public static ArrayList<ArrayList<String>> searchBook(String titleSearch, String authorSearch, String subjectSearch) throws IllegalArgumentException
 	{
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		ArrayList<ArrayList> results = new ArrayList<ArrayList>();
+		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
 		ResultSet rs;
 		Statement stmt;
 		try
 		{
 			stmt = con.createStatement();
-			rs = stmt.executeQuery(   "Select * from book b, (SELECT callNumber, count(*) AS qty from ("
+			rs = stmt.executeQuery(   "Select d.callNumber, d.title, d.mainAuthor, qty from book d, (SELECT callNumber, count(*) AS qty from ("
 									+ "SELECT * FROM Book b "
 									+ "WHERE b.title LIKE '" + titleSearch
 									+ "' UNION ALL " 
@@ -38,12 +38,15 @@ public class BookTable {
 									+ "WHERE EXISTS (SELECT * FROM HasSubject h WHERE "
 									+ "h.callNumber = b.callNumber "
 									+ "AND h.subject LIKE '" + subjectSearch + "'))"
-									+ " GROUP BY callNumber ORDER BY qty desc) c where b.callnumber = c.callnumber");
+									+ " GROUP BY callNumber ORDER BY qty desc) c where d.callnumber = c.callnumber");
 			
 			int i = 0;
 			while(rs.next())
 			{
 				String callNumber = rs.getString("callNumber");
+				String title = rs.getString("title");
+				String author = rs.getString("mainAuthor");
+				
 				ResultSet inout;
 				inout = stmt.executeQuery("select count(*) as numin from bookcopy where callnumber = '" + callNumber + "' AND status = 'in'");
 				inout.next();
@@ -51,16 +54,16 @@ public class BookTable {
 				inout = stmt.executeQuery("select count(*) as numout from bookcopy where callnumber = '" + callNumber + "' AND status = 'out'");
 				inout.next();
 				String numout = inout.getString("numout");
-				String title = rs.getString("title");
-				String author = rs.getString("mainAuthor");
-				results.get(i).set(0, callNumber);
-				results.get(i).set(1, title);
-				results.get(i).set(2, author);
-				results.get(i).set(3,numin);
-				results.get(i).set(4,numout);
+				ArrayList<String> temp = new ArrayList<String>();
+				temp.add(0, callNumber);
+				temp.add(1, title);
+				temp.add(2, author);
+				temp.add(3, numin);
+				temp.add(4, numout);
+				results.add(i,temp);
 				i++;
 			}
-		}catch(SQLException e)
+		}catch(Exception e)
 		{
 			
 			e.printStackTrace();

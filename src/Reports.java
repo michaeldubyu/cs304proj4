@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class Reports {
 	
 	private static Connection con;
+	private static final long CURRENT_TIME = (System.currentTimeMillis() / 1000L);
 	
 	
 	/*
@@ -64,8 +65,7 @@ public class Reports {
 			aPopularBook.add(rs.getString(3));
 			result.add(aPopularBook);
 			i++;
-		}
-				
+		}	
 		
 		} catch (SQLException e2) {
 			e2.printStackTrace();
@@ -84,7 +84,7 @@ public class Reports {
 	 * 
 	*/
 	
-	public static ArrayList<ArrayList<String>> lentItemsReport(String subject)
+	public static ArrayList<ArrayList<String>> borrowedItemsReport(String subject)
 	{
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
@@ -92,43 +92,48 @@ public class Reports {
 			e.printStackTrace();
 		}
 		
+		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
 		Statement  stmt;
 		ResultSet  rs;
 		
-		try {
+		try 
+		{
 			
 			if (subject.equals(""))
 			{
-			
 				stmt = con.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM borrowing ORDER BY callNumber ASC");
-				
-				while(rs.next())
-				{
-					ArrayList<String> aBorrowing = new ArrayList<String>();
-					
-					aBorrowing.add(rs.getString(3));
-					
-					
-				}
-				
-			
-			
-			
 			}
 			
+			else
+			{
+				stmt = con.createStatement();
+				rs = stmt.executeQuery("SELECT * FROM (SELECT * FROM borrowing o, hasSubject s WHERE "+
+				                       "s.subject = "+subject+" AND o.callNumber = s.callNumber)" + 
+						               "ORDER BY callNumber ASC");
+			}
 			
-			
-			
-			
-			
+			while(rs.next())
+			{
+				ArrayList<String> aBorrowing = new ArrayList<String>();
+				String overdue = "";
+				int inDate = Integer.parseInt(rs.getString(6));
+					
+				if (CURRENT_TIME > inDate)
+					overdue = "Item Overdue";
+					
+				aBorrowing.add(rs.getString(3));
+				aBorrowing.add(rs.getString(5));
+				aBorrowing.add(rs.getString(6));
+				aBorrowing.add(overdue);
+				result.add(aBorrowing);
+			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		
-		return null;
+		return result;
 	}
 	
 }
