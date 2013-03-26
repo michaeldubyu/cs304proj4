@@ -17,8 +17,8 @@ public class BorrowedReport {
 	public BorrowedReport(){
 			
 			final Frame searchFrame = new Frame("Books on Loan");
-			final JTextField title = new JTextField(20);
-			final JTextField author = new JTextField(20);
+			//final JTextField title = new JTextField(20);
+			//final JTextField author = new JTextField(20);
 			final JTextField subject = new JTextField(20);
 			
 			searchFrame.setLayout(new GridLayout(4,2));
@@ -29,9 +29,9 @@ public class BorrowedReport {
 			//Label overdueLabel = new Label("Overdue? :");
 
 			//searchFrame.add(titleLabel);
-			searchFrame.add(title);
+			//searchFrame.add(title);
 			//searchFrame.add(authorLabel);
-			searchFrame.add(author);
+			//searchFrame.add(author);
 			searchFrame.add(subjectLabel);
 			searchFrame.add(subject);
 			
@@ -41,7 +41,7 @@ public class BorrowedReport {
 			searchFrame.setLocationRelativeTo(null);
 			searchFrame.pack();
 			searchFrame.setVisible(true);
-			title.requestFocus();	
+			//title.requestFocus();	
 			
 			submit.addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
