@@ -102,15 +102,26 @@ public class Reports {
 			if (subject.equals(""))
 			{
 				stmt = con.createStatement();
-				rs = stmt.executeQuery("SELECT * FROM borrowing ORDER BY callNumber ASC");
+				//rs = stmt.executeQuery("SELECT * FROM borrowing ORDER BY callNumber ASC");
+				
+				rs = stmt.executeQuery("SELECT o.callnumber, b1.name, b2.copyNumber, o.outDate, o.inDate "+
+										"FROM borrowing o, book b " +
+										"WHERE o.callNumber = b1.callNumber and b1.callNumber = b2.callNumber " +
+										"ORDER BY o.callNumber ASC");
+				
 			}
 			
 			else
 			{
 				stmt = con.createStatement();
-				rs = stmt.executeQuery("SELECT * FROM (SELECT * FROM borrowing o, hasSubject s WHERE "+
-				                       "s.subject = "+subject+" AND o.callNumber = s.callNumber)" + 
-						               "ORDER BY callNumber ASC");
+				//rs = stmt.executeQuery("SELECT * FROM (SELECT * FROM borrowing o, hasSubject s WHERE "+
+				//                       "s.subject = "+subject+" AND o.callNumber = s.callNumber)" + 
+				//		               "ORDER BY callNumber ASC");
+				rs = stmt.executeQuery("SELECT o.callnumber, b1.name, b2.copyNumber, o.outDate, o.inDate "+
+										"FROM borrowing o, book b1, bookCopy b2, hasSubject s " +
+										"WHERE o.callNumber = b1.callNumber AND b1.callNumber = b2.callNumber AND s.subject = '"+subject+"' "+
+										"ORDER BY o.callNumber ASC");
+				
 			}
 			
 			while(rs.next())
@@ -121,10 +132,11 @@ public class Reports {
 					
 				if (CURRENT_TIME > inDate)
 					overdue = "Item Overdue";
-					
+				aBorrowing.add(rs.getString(1));	
+				aBorrowing.add(rs.getString(2));
 				aBorrowing.add(rs.getString(3));
+				aBorrowing.add(rs.getString(4));
 				aBorrowing.add(rs.getString(5));
-				aBorrowing.add(rs.getString(6));
 				aBorrowing.add(overdue);
 				result.add(aBorrowing);
 			}
