@@ -26,29 +26,36 @@ public class BookTable {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(   "Select * from book b, (SELECT callNumber, count(*) AS qty from ("
 									+ "SELECT * FROM Book b "
-									+ "WHERE b.title LIKE " + titleSearch
-									+ "UNION ALL" 
+									+ "WHERE b.title LIKE '" + titleSearch
+									+ "'UNION ALL" 
 									+ "SELECT * FROM Book b "
-									+ "WHERE b.mainAuthor LIKE " + authorSearch + " "
+									+ "WHERE b.mainAuthor LIKE '" + authorSearch + "' "
 									+ "OR EXISTS (SELECT * FROM HasAuthor h "
 									+ "WHERE h.callNumber = b.callNumber "
-									+ "AND h.name LIKE " + authorSearch + ")"
+									+ "AND h.name LIKE '" + authorSearch + "')"
 									+ "UNION ALL"
 									+ "SELECT * FROM Book b "
 									+ "WHERE EXISTS (SELECT * FROM HasSubject h WHERE "
 									+ "h.callNumber = b.callNumber "
-									+ "AND h.subject LIKE " + subjectSearch + "))"
+									+ "AND h.subject LIKE '" + subjectSearch + "'))"
 									+ "GROUP BY callNumber ORDER BY qty desc) c where b.callnumber = c.callnumber");
 			
 			int i = 0;
 			while(rs.next())
 			{
 				String callNumber = rs.getString("callNumber");
+				ResultSet inout;
+				inout = stmt.executeQuery("select count(*) as numin from bookcopy where callnumber = '" + callNumber + "' AND status = 'in'");
+				String numin = inout.getString("numin");
+				inout = stmt.executeQuery("select count(*) as numout from bookcopy where callnumber = '" + callNumber + "' AND status = 'out'");
+				String numout = inout.getString("numout");
 				String title = rs.getString("title");
 				String author = rs.getString("mainAuthor");
 				results.get(i).set(0, callNumber);
 				results.get(i).set(1, title);
 				results.get(i).set(2, author);
+				results.get(i).set(3,numin);
+				results.get(i).set(4,numout);
 				i++;
 			}
 		}catch(SQLException e)
