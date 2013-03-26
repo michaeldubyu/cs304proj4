@@ -261,7 +261,7 @@ public class BorrowerTable {
 			hid = rs.getInt("tSize") + 1;
 			ps = con.prepareStatement("INSERT INTO HoldRequest VALUES (?,?,?,?)");
 			ps.setString(1, String.valueOf(hid));
-			ps.setString(2, String.valueOf(hid));
+			ps.setString(2, String.valueOf(bid));
 			ps.setString(3, callNumber);
 			ps.setString(4, String.valueOf(date));
 			ps.executeUpdate();
