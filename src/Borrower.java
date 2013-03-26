@@ -58,7 +58,7 @@ public class Borrower {
 			else if (e.getActionCommand()=="check account"){
 
 			}else if (e.getActionCommand()=="hold"){
-
+				new processHold();
 			}else if (e.getActionCommand()=="pay"){
 
 			}

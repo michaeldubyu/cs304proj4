@@ -17,11 +17,11 @@ public class processHold {
 		insertFrame.setLayout(new GridLayout(3,2));
 
 		Label callNoLabel = new Label("Call No* :");
-		Label copyNoLabel = new Label("Borrower ID* :");
+		Label bidLabel = new Label("Borrower ID* :");
 
 		insertFrame.add(callNoLabel);
-		insertFrame.add(bid);
-		insertFrame.add(copyNoLabel);
+		insertFrame.add(callNo);
+		insertFrame.add(bidLabel);
 		insertFrame.add(bid);
 		
 		Button submit = new Button("Submit");
