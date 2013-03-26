@@ -230,7 +230,7 @@ public class BorrowerTable {
 		} catch (Exception e){e.printStackTrace();}
 		
 	}
-	public static int placeHold(String string, String bid) throws IllegalArgumentException
+	public static int placeHold(String callNumber, String bid) throws IllegalArgumentException
 	{
 		int hid = -1;
 		try {
@@ -246,16 +246,21 @@ public class BorrowerTable {
 		
 		try{
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT COUNT(*) AS numin FROM BookCopy WHERE callNumber = '" + string + "' AND status = 'in'");
+			rs = stmt.executeQuery("SELECT COUNT(*) AS numin FROM BookCopy WHERE callNumber = '" + callNumber + "' AND status = 'in'");
 			rs.next();
 			if(rs.getInt("numin") > 0)
 			{
 				throw new IllegalArgumentException("There are currently copies of the book in");
 			}
-			rs = stmt.executeQuery("SELECT Count(*) FROM HoldRequest AS tSize");
+			rs = stmt.executeQuery("SELECT Count(*) AS tSize FROM HoldRequest");
 			rs.next();
 			hid = rs.getInt("tSize") + 1;
-			rs = stmt.executeQuery("INSERT INTO HoldRequest VALUES ('" + hid + "','" + bid + "','" + string + "','" + date + "')");
+			ps = con.prepareStatement("INSERT INTO HoldRequest VALUES (?,?,?,?)");
+			ps.setString(1, String.valueOf(hid));
+			ps.setString(2, String.valueOf(hid));
+			ps.setString(3, callNumber);
+			ps.setString(4, String.valueOf(date));
+			ps.executeUpdate();
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
