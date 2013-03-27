@@ -38,7 +38,8 @@ public class Librarian {
 		librarianFrame.setLocationRelativeTo(m);
         librarianFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
-                librarianFrame.setVisible(false);
+                //librarianFrame.setVisible(false);
+                librarianFrame.dispose();
             }
         } );
 		librarianFrame.setTitle("MDMJ Library Systems - Librarian Management");
@@ -50,7 +51,7 @@ public class Librarian {
 
 		public void actionPerformed(ActionEvent e) {	
 			//wait 10 seconds until timeout
-			if (e.getActionCommand()=="add book" && !addHasBeenCalled){
+			if (e.getActionCommand()=="add book"){// && !addHasBeenCalled){
 				new AddBook(mainFrame);
 				addHasBeenCalled = true;
 			}
