@@ -174,10 +174,31 @@ public class BorrowerTable {
 		    System.out.println("Message: " + ex.getMessage());
 		}	
 		return result;
-	    }
+    }
+		
+
+	static boolean checkHoldExists(String callNo){		
+		Statement holdCheck;
+		ResultSet holdCheckRS;
+		boolean holdExists = false;
+		try{
+			con = db_helper.connect("ora_i7f7", "a71163091");
+			
+			holdCheck = con.createStatement();
+			holdCheckRS = holdCheck.executeQuery("SELECT * FROM HoldRequest WHERE callNumber = " + callNo);
+			
+			if (holdCheckRS.next()){
+				//if there is a next row at all, that is, if there exists a hold request
+				holdExists = true;
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return holdExists;
+	}
 		
 	/*
-	 * Processes a book return. 0 is returned if the book is applied on time. 1 is returned if a fine was applied.
+	 * Processes a book return. 0 is returned if the book is returned on time. 1 is returned if a fine was applied.
 	 */
 	static int processReturn(String callNo, String copyNo)
 	{
@@ -202,12 +223,13 @@ public class BorrowerTable {
 			
   			s2 = con.createStatement();
 			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo + " AND copyNo = " + copyNo);
-						
-			while(rs.next())
+					
+			if(rs.next())
 			{
 				inDate = Long.valueOf(rs.getString("inDate")).longValue();
 				borid = Integer.parseInt(rs.getString("borid"));
-			}
+			} else return -1;
+			
 			
 			if(curTime > inDate)
 			{
@@ -227,8 +249,6 @@ public class BorrowerTable {
 				
 				return 1;
 			}
- 
-
 		} catch (Exception e){e.printStackTrace();}
 		return 0;
 
