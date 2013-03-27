@@ -79,6 +79,7 @@ public class AddBook {
 				String sub2 = subjectsArray.get(1);
 				String sub3 = subjectsArray.get(2);
 				BookTable.insertBook(callNumber.getText(), isbn.getText(), title.getText(), mainAuthor.getText(), publisher.getText(), year.getText(), amount.getText(), sub1, sub2, sub3);
+				bookFrame.dispose();
 			}
 		});
 		bookFrame.addWindowListener( new WindowAdapter(){
