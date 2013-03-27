@@ -7,7 +7,7 @@ public class BorrowingTable {
 	private static Connection con;
 	
 	private static final String[] attNames = 
-		{"bid", "name", "callNumber", "copyNo", "inDate"}; 
+		{"bid", "name", "title", "inDate", "emailAddress"}; 
 	
 	private static final long CURRENT_TIME = (System.currentTimeMillis() / 1000L);
 	
@@ -130,9 +130,9 @@ public class BorrowingTable {
 		try {
 			
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT bid, name, callNumber, copyNo, inDate " +
-								   "FROM borrowing, borrower " +
-								   "WHERE borrowing.bid=borrower.bid");
+			rs = stmt.executeQuery("SELECT b1.bid, b2.name, b3.title, b1.inDate, b2.emailAddress " +
+								   "FROM borrowing b1, borrower b2, book b3, bookCopy b4 " +
+								   "WHERE b1.bid=b2.bid AND b1.callNumber = b3.callNumber AND b3.callNumber = b4.callNumber");
 			
 			 while(rs.next())
 			  {  
