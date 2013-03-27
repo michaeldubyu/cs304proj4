@@ -25,8 +25,8 @@ public class SearchBook {
 		searchFrame.setLayout(new GridLayout(4,2));
 
 		Label titleLabel = new Label("Title :");
-		Label authorLabel = new Label("Subject :");
-		Label subjectLabel = new Label("Author :");
+		Label authorLabel = new Label("Author :");
+		Label subjectLabel = new Label("Subject :");
 
 		searchFrame.add(titleLabel);
 		searchFrame.add(title);
