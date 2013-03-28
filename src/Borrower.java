@@ -60,7 +60,7 @@ public class Borrower {
 			}else if (e.getActionCommand()=="hold"){
 				new processHold();
 			}else if (e.getActionCommand()=="pay"){
-
+				new PayFines();
 			}
 		}
 	}

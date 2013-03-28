@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class BorrowerTable {
@@ -176,6 +177,60 @@ public class BorrowerTable {
 		return result;
     }
 		
+	public static ArrayList<ArrayList<String>> checkFinesExist (String bid){
+		Statement fineCheck;
+		ResultSet fineCheckRS;
+		Statement borCheck;
+		ResultSet borCheckRS;
+		ArrayList<String> borrowingID = new ArrayList();
+		ArrayList<ArrayList<String>> result = new ArrayList();
+		
+		try{
+			con = db_helper.connect("ora_i7f7", "a71163091");
+			
+			borCheck = con.createStatement();
+			borCheckRS = borCheck.executeQuery("SELECT * FROM Borrowing WHERE bid = " + bid);
+			
+			while (borCheckRS.next()){
+				borrowingID.add(borCheckRS.getString("borid"));
+			}
+			
+			for (String transaction : borrowingID){
+				fineCheck = con.createStatement();
+				fineCheckRS = fineCheck.executeQuery("SELECT * FROM Fine WHERE boridid = " + transaction);
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy 'at' h:mm a");
+				if (fineCheckRS.next()){
+					//add it to the list of fines in result
+					String amount = fineCheckRS.getString("amount");
+					String issuedDate = fineCheckRS.getString("issueddate");
+					String paidDate = fineCheckRS.getString("paiddate");
+					
+					
+					Date readableIssueDate = new Date(Long.parseLong(issuedDate));
+					Date readablePaidDate;
+		
+					if (paidDate != null){
+						readablePaidDate = new Date(Long.parseLong(paidDate));
+						paidDate = readablePaidDate.toString();
+					}
+					else paidDate = "";
+				
+					ArrayList<String> oneFine = new ArrayList(3);
+					oneFine.add(0, amount);
+					oneFine.add(1, readableIssueDate.toString());
+					oneFine.add(2, paidDate);
+					result.add(oneFine);
+				}
+			}
+			
+			
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
 
 	static boolean checkHoldExists(String callNo){		
 		Statement holdCheck;
