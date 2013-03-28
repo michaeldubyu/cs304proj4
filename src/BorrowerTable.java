@@ -346,4 +346,29 @@ public class BorrowerTable {
 		}
 		return hid;
 	}
+	
+	// Check his/her account. The system will display the items the borrower has currently borrowed 
+	// 		and not yet returned, any outstanding fines and the hold requests that have been placed by the borrower.
+	public static void checkAccount(int bid){
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		ResultSet rs;
+		Statement stmt;
+		
+		try{
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM Book b WHERE"
+										+ "(SELECT * FROM Borrowing c where"
+										+ "c.bid = bid AND c.callNumber = b.callNumber)");
+			
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
 }

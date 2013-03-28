@@ -72,6 +72,8 @@ public class BorrowedReport {
 		                successFrame.addWindowListener( new WindowAdapter() {
 		                    public void windowClosing(WindowEvent we) {
 		                        successFrame.setVisible(false);
+		                        searchFrame.dispose();
+
 		                    }
 		                } );
 		        	}catch(Exception argException){

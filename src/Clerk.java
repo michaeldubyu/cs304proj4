@@ -43,6 +43,7 @@ public class Clerk {
         clerkFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 clerkFrame.setVisible(false);
+                clerkFrame.dispose();
             }
         } );
 		clerkFrame.setTitle("MDMJ Library Systems - Clerk Management System");

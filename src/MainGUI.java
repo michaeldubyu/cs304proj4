@@ -48,11 +48,11 @@ public class MainGUI{
 	class MyActionListener implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {	
-			if (e.getActionCommand()=="clerk" && c == null){
+			if (e.getActionCommand()=="clerk"){// && c == null){
 				c = new Clerk(mainFrame);
-			}else if (e.getActionCommand()=="borrower" && b == null){
+			}else if (e.getActionCommand()=="borrower"){// && b == null){
 				b = new Borrower(mainFrame);
-			}else if (e.getActionCommand()=="librarian" && l == null){
+			}else if (e.getActionCommand()=="librarian"){// && l == null){
 				l = new Librarian(mainFrame);
 			}
 		}
@@ -64,6 +64,8 @@ public class MainGUI{
 	public static void main(String[] args) {
 		new MainGUI();
 	}
+	
+
 
 
 

@@ -55,6 +55,7 @@ public class CheckOutBook {
 	                successFrame.addWindowListener( new WindowAdapter() {
 	                    public void windowClosing(WindowEvent we) {
 	                        successFrame.setVisible(false);
+	                        insertFrame.dispose();
 	                    }
 	                } );
 	        	}catch(Exception argException){

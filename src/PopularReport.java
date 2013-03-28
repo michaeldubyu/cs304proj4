@@ -40,6 +40,7 @@ public class PopularReport {
         queryFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 queryFrame.setVisible(false);
+                queryFrame.dispose();
             }
         } );
 		queryFrame.setVisible(true);

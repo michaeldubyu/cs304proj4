@@ -53,6 +53,7 @@ public class ProcessRet {
 	                fineFrame.addWindowListener( new WindowAdapter() {
 	                    public void windowClosing(WindowEvent we) {
 	                        fineFrame.setVisible(false);
+	                        insertFrame.dispose();
 	                    }
 	                } );
 	                
@@ -69,6 +70,7 @@ public class ProcessRet {
 		                holdFrame.addWindowListener( new WindowAdapter() {
 		                    public void windowClosing(WindowEvent we) {
 		                        holdFrame.setVisible(false);
+		                        insertFrame.dispose();
 		                    }
 		                } );
 	                }
