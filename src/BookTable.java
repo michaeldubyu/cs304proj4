@@ -128,7 +128,7 @@ public class BookTable {
 			ps = con.prepareStatement("INSERT INTO book VALUES (?,?,?,?,?,?)");
 			
 			if ((!((callNumber.matches(".*\\d.*"))&&(!callNumber.matches("^\\d*$"))))||callNumber.equals(""))
-				throw new IllegalArgumentException("Invalid Call Number");
+				throw new IllegalArgumentException("Invalid Call Number, it should only have a number ");
 			else
 				ps.setString(1, callNumber);
 			

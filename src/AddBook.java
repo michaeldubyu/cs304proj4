@@ -13,8 +13,8 @@ import javax.swing.JTextField;
 
 
 public class AddBook {
-		
-	
+
+
 	/**
 	 * Instantiates an add book dialog, with menues and structures
 	 * @param m
@@ -32,7 +32,7 @@ public class AddBook {
 		final JTextField subjects = new JTextField(20);
 
 
-		
+
 		Label callLabel = new Label("Call Number: ");
 		Label isbnLabel = new Label("ISBN: ");
 		Label titleLabel = new Label("Title: ");
@@ -42,7 +42,7 @@ public class AddBook {
 		Label amountLabel = new Label("Amount: ");
 		Label subjectsLabel = new Label("Subjects: ");
 
-		bookFrame.setLayout(new GridLayout(11,2));		
+		bookFrame.setLayout(new GridLayout(3,1));		
 		bookFrame.add(callLabel);
 		bookFrame.add(callNumber);
 		bookFrame.add(isbnLabel);
@@ -59,7 +59,7 @@ public class AddBook {
 		bookFrame.add(amount);
 		bookFrame.add(subjectsLabel);
 		bookFrame.add(subjects);
-		
+
 		btnAdd = new Button("Finish Adding the Book");
 		btnAdd.setActionCommand("add book");
 		bookFrame.add(btnAdd);
@@ -69,16 +69,46 @@ public class AddBook {
 		callLabel.requestFocus();
 		bookFrame.setTitle("Add Book Form");
 		btnAdd.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String subjectText = subjects.getText();
-				List<String> subjectsArray = Arrays.asList(subjectText.split("\\s*,\\s*"));
+				List<String> subjectsArray = Arrays.asList(subjectText.trim().split("\\s*,\\s*"));
 				//TODO: do error checking on these
-				String sub1 = subjectsArray.get(0);
-				String sub2 = subjectsArray.get(1);
-				String sub3 = subjectsArray.get(2);
-				BookTable.insertBook(callNumber.getText(), isbn.getText(), title.getText(), mainAuthor.getText(), publisher.getText(), year.getText(), amount.getText(), sub1, sub2, sub3);
+				int numSubs = subjectsArray.size();
+				String sub1, sub2, sub3;
+				sub1 = "";
+				sub2 = "";
+				sub3 = "";
+				if(numSubs > 0)
+					sub1 = subjectsArray.get(0);
+				if(numSubs > 1)
+					sub2 = subjectsArray.get(1);
+				if(numSubs > 2)
+					sub3 = subjectsArray.get(2);
+				try {
+					BookTable.insertBook(callNumber.getText(), isbn.getText(), title.getText(), mainAuthor.getText(), publisher.getText(), year.getText(), amount.getText(), sub1, sub2, sub3);
+					final Frame successFrame = new Frame("Error!");
+					successFrame.pack();
+					successFrame.setVisible(true);
+					successFrame.setAlwaysOnTop(true);
+					successFrame.setLocationRelativeTo(bookFrame);
+					
+				} catch (IllegalArgumentException err) {
+					final Frame errorFrame = new Frame("Error!");
+					Label error = new Label(err.getMessage());
+					errorFrame.add(error);
+					errorFrame.pack();
+					errorFrame.setVisible(true);
+					errorFrame.setAlwaysOnTop(true);
+					errorFrame.setLocationRelativeTo(bookFrame);
+					errorFrame.addWindowListener( new WindowAdapter() {
+						public void windowClosing(WindowEvent we) {
+
+							errorFrame.setVisible(false);
+						}
+					} );
+				}
 			}
 		});
 		bookFrame.addWindowListener( new WindowAdapter(){
@@ -89,6 +119,6 @@ public class AddBook {
 		});
 	}
 
-			
-	
+
+
 }
