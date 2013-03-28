@@ -215,12 +215,12 @@ public class BorrowerTable {
 					
 					//TODO: If it can get working, uncommment the other stuff
 					//Date readableIssueDate = new Date(Long.parseLong(issuedDate));
-					Date readableIssueDate = new Date(issuedDate);
+					Date readableIssueDate = new Date(Long.parseLong(issuedDate));
 					Date readablePaidDate;
 		
 					if (paidDate != null){
 						//readablePaidDate = new Date(Long.parseLong(paidDate));
-						readablePaidDate = new Date(paidDate);
+						readablePaidDate = new Date(Long.parseLong(paidDate));
 						paidDate = readablePaidDate.toString();
 					}
 					else paidDate = "";
