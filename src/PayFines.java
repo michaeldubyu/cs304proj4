@@ -4,6 +4,8 @@ import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -13,27 +15,19 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 
-public class SearchBook {
+public class PayFines {
 
-	public SearchBook(){
+	public PayFines(){
 		
-		final Frame searchFrame = new Frame("Search For Books");
-		final JTextField title = new JTextField(20);
-		final JTextField author = new JTextField(20);
-		final JTextField subject = new JTextField(20);
+		final Frame searchFrame = new Frame("Fine Lookup");
+		final JTextField bid = new JTextField(20);
 		
-		searchFrame.setLayout(new GridLayout(4,2));
+		searchFrame.setLayout(new GridLayout(2,2));
 
-		Label titleLabel = new Label("Title :");
-		Label authorLabel = new Label("Author :");
-		Label subjectLabel = new Label("Subject :");
-
-		searchFrame.add(titleLabel);
-		searchFrame.add(title);
-		searchFrame.add(authorLabel);
-		searchFrame.add(author);
-		searchFrame.add(subjectLabel);
-		searchFrame.add(subject);
+		Label bidLabel = new Label("Borrower ID* :");
+		
+		searchFrame.add(bidLabel);
+		searchFrame.add(bid);
 		
 		Button submit = new Button("Submit");
 		searchFrame.add(new Label("(*)Required fields marked.")); //to pad the submit button to the right
@@ -41,27 +35,26 @@ public class SearchBook {
 		searchFrame.setLocationRelativeTo(null);
 		searchFrame.pack();
 		searchFrame.setVisible(true);
-		title.requestFocus();	
+		bid.requestFocus();	
 		
 		submit.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-	        		ArrayList<ArrayList<String>> result = BookTable.searchBook(title.getText(),author.getText(),subject.getText());
-	        		if (result.size()==0) throw new Exception("There were no results for your query. Please try again.");
+	        		ArrayList<ArrayList<String>> result = BorrowerTable.checkFinesExist(bid.getText());
+	        		if (result.size()==0) throw new Exception("You have no fines!");
 	        		
-	        		final Frame successFrame = new Frame("Results");
+	        		final Frame successFrame = new Frame("Fines");
 
 	        		//callnumber, name, count
-	        		Object rowData[][] = new Object[result.size()][3];
+	        		Object rowData[][] = new Object[result.size()][2];
 	        		int i = 0;
 	        		for (ArrayList<String> s:result){
 	        			rowData[i] = s.toArray();
 	        			i++;
 	        		}
-	        		Object columnNames[] = { "Call Number", "Title", "Author" };
+	        		Object columnNames[] = { "Amount" , "Issued Date", "Paid Date"};
 	        		JTable table = new JTable(rowData, columnNames);
-
 	        		JScrollPane scroll = new JScrollPane(table);
 	        		
 	        		successFrame.add(scroll);
@@ -72,7 +65,6 @@ public class SearchBook {
 	                successFrame.addWindowListener( new WindowAdapter() {
 	                    public void windowClosing(WindowEvent we) {
 	                        successFrame.setVisible(false);
-	                        searchFrame.dispose();
 	                    }
 	                } );
 	        	}catch(Exception argException){

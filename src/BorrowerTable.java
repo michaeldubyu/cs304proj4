@@ -1,13 +1,16 @@
 import java.io.IOException;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class BorrowerTable {
 	
 	private static Connection con;
-	
+
 	private static final String[] attNames = 
 		{"bid", "password", "name", "address", "phone", "email", "sinOrStNo","expiryDate","type"};
+
+	private static final int bidRequiredLength = 10;
 	
 	
 	//Insert a borrower into the table
@@ -174,10 +177,91 @@ public class BorrowerTable {
 		    System.out.println("Message: " + ex.getMessage());
 		}	
 		return result;
-	    }
+    }
+		
+		/**
+		 * Checks all borrowing, for given bid, then for each transaction, is there a fine in the finetable?
+		 * @param bid
+		 * @return
+		 */
+		// Set paid date to current date, where null
+	public static ArrayList<ArrayList<String>> checkFinesExist (String bid){
+		Statement fineCheck;
+		ResultSet fineCheckRS;
+		Statement borCheck;
+		ResultSet borCheckRS;
+		ArrayList<String> borrowingID = new ArrayList<String>();
+		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+		if(bid.length() < bidRequiredLength || bid.length() > bidRequiredLength ) throw new IllegalArgumentException("Bid needs to be "+bidRequiredLength+" numbers long");
+		try{
+			con = db_helper.connect("ora_i7f7", "a71163091");
+			
+			borCheck = con.createStatement();
+			borCheckRS = borCheck.executeQuery("SELECT * FROM Borrowing WHERE bid = " + bid);
+			
+			while (borCheckRS.next()){
+				borrowingID.add(borCheckRS.getString("borid"));
+			}
+			
+			for (String transaction : borrowingID){
+				fineCheck = con.createStatement();
+				fineCheckRS = fineCheck.executeQuery("SELECT * FROM Fine WHERE boridid = " + transaction);
+				SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy 'at' h:mm a");
+				if (fineCheckRS.next()){
+					//add it to the list of fines in result
+					String amount = fineCheckRS.getString("amount");
+					String issuedDate = fineCheckRS.getString("issueddate");
+					String paidDate = fineCheckRS.getString("paiddate");
+					
+					//TODO: If it can get working, uncommment the other stuff
+					//Date readableIssueDate = new Date(Long.parseLong(issuedDate));
+					Date readableIssueDate = new Date(issuedDate);
+					Date readablePaidDate;
+		
+					if (paidDate != null){
+						//readablePaidDate = new Date(Long.parseLong(paidDate));
+						readablePaidDate = new Date(paidDate);
+						paidDate = readablePaidDate.toString();
+					}
+					else paidDate = "";
+				
+					ArrayList<String> oneFine = new ArrayList(3);
+					oneFine.add(0, amount);
+					oneFine.add(1, readableIssueDate.toString());
+					oneFine.add(2, paidDate);
+					result.add(oneFine);
+				}
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	static boolean checkHoldExists(String callNo){		
+		Statement holdCheck;
+		ResultSet holdCheckRS;
+		boolean holdExists = false;
+		try{
+			con = db_helper.connect("ora_i7f7", "a71163091");
+			
+			holdCheck = con.createStatement();
+			holdCheckRS = holdCheck.executeQuery("SELECT * FROM HoldRequest WHERE callNumber = " + callNo);
+			
+			if (holdCheckRS.next()){
+				//if there is a next row at all, that is, if there exists a hold request
+				holdExists = true;
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return holdExists;
+	}
 		
 	/*
-	 * Processes a book return. 0 is returned if the book is applied on time. 1 is returned if a fine was applied.
+	 * Processes a book return. 0 is returned if the book is returned on time. 1 is returned if a fine was applied.
 	 */
 	static int processReturn(String callNo, String copyNo)
 	{
@@ -202,12 +286,13 @@ public class BorrowerTable {
 			
   			s2 = con.createStatement();
 			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo + " AND copyNo = " + copyNo);
-						
-			while(rs.next())
+					
+			if(rs.next())
 			{
 				inDate = Long.valueOf(rs.getString("inDate")).longValue();
 				borid = Integer.parseInt(rs.getString("borid"));
-			}
+			} else return -1;
+			
 			
 			if(curTime > inDate)
 			{
@@ -227,14 +312,12 @@ public class BorrowerTable {
 				
 				return 1;
 			}
- 
-
 		} catch (Exception e){e.printStackTrace();}
 		return 0;
 
 		
 	}
-	public static int placeHold(String string, String bid) throws IllegalArgumentException
+	public static int placeHold(String callNumber, String bid) throws IllegalArgumentException
 	{
 		int hid = -1;
 		try {
@@ -250,20 +333,50 @@ public class BorrowerTable {
 		
 		try{
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT COUNT(*) AS numin FROM BookCopy WHERE callNumber = '" + string + "' AND status = 'in'");
+			rs = stmt.executeQuery("SELECT COUNT(*) AS numin FROM BookCopy WHERE callNumber = '" + callNumber + "' AND status = 'in'");
 			rs.next();
 			if(rs.getInt("numin") > 0)
 			{
 				throw new IllegalArgumentException("There are currently copies of the book in");
 			}
-			rs = stmt.executeQuery("SELECT Count(*) FROM HoldRequest AS tSize");
+			rs = stmt.executeQuery("SELECT Count(*) AS tSize FROM HoldRequest");
 			rs.next();
 			hid = rs.getInt("tSize") + 1;
-			rs = stmt.executeQuery("INSERT INTO HoldRequest VALUES ('" + hid + "','" + bid + "','" + string + "','" + date + "')");
+			ps = con.prepareStatement("INSERT INTO HoldRequest VALUES (?,?,?,?)");
+			ps.setString(1, String.valueOf(hid));
+			ps.setString(2, String.valueOf(bid));
+			ps.setString(3, callNumber);
+			ps.setString(4, String.valueOf(date));
+			ps.executeUpdate();
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
 		return hid;
+	}
+	
+	// Check his/her account. The system will display the items the borrower has currently borrowed 
+	// 		and not yet returned, any outstanding fines and the hold requests that have been placed by the borrower.
+	public static void checkAccount(int bid){
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		ResultSet rs;
+		Statement stmt;
+		
+		try{
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM Book b WHERE"
+										+ "(SELECT * FROM Borrowing c where"
+										+ "c.bid = bid AND c.callNumber = b.callNumber)");
+			
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 }

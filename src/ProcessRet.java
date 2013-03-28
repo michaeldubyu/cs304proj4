@@ -41,7 +41,8 @@ public class ProcessRet {
 	        		final Frame fineFrame = new Frame("Book Returns.");
 	        		String msg;
 	        		if (fine==1) msg = "This book was late! A fine has been applied.";
-	        		else msg = "Book successfully returned.";
+	        		else if (fine==0) msg = "Book successfully returned.";
+	        		else msg = "Error! Book was never checked out!";
 
 	        		Label error = new Label(msg);
 	        		fineFrame.add(error);
@@ -52,8 +53,27 @@ public class ProcessRet {
 	                fineFrame.addWindowListener( new WindowAdapter() {
 	                    public void windowClosing(WindowEvent we) {
 	                        fineFrame.setVisible(false);
+	                        insertFrame.dispose();
 	                    }
-	                } );	
+	                } );
+	                
+	                //check if there exists a hold for this book
+	                boolean holdExists = BorrowerTable.checkHoldExists(callNo.getText());
+	                if (holdExists){
+	                	final Frame holdFrame = new Frame("A Hold Exists!");
+	                	Label notification = new Label("The user who requested this book has been notified of this return.");
+		        		holdFrame.add(notification);
+		        		holdFrame.pack();
+		        		holdFrame.setVisible(true);
+		        		holdFrame.setAlwaysOnTop(true);
+		        		holdFrame.setLocationRelativeTo(insertFrame);
+		                holdFrame.addWindowListener( new WindowAdapter() {
+		                    public void windowClosing(WindowEvent we) {
+		                        holdFrame.setVisible(false);
+		                        insertFrame.dispose();
+		                    }
+		                } );
+	                }
 	        		
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");

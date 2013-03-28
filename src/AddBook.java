@@ -109,6 +109,9 @@ public class AddBook {
 						}
 					} );
 				}
+				//TODO: This shouldn't be here
+				//BookTable.insertBook(callNumber.getText(), isbn.getText(), title.getText(), mainAuthor.getText(), publisher.getText(), year.getText(), amount.getText(), sub1, sub2, sub3);
+				bookFrame.dispose();
 			}
 		});
 		bookFrame.addWindowListener( new WindowAdapter(){

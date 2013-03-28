@@ -41,7 +41,8 @@ public class Borrower {
 		borrowerFrame.setTitle("MDMJ Library Systems - Borrower Actions");
         borrowerFrame.addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
-                borrowerFrame.setVisible(false);
+                //borrowerFrame.setVisible(false);
+                borrowerFrame.dispose();
             }
         } );
 		borrowerFrame.setLocationRelativeTo(m);  
@@ -60,7 +61,7 @@ public class Borrower {
 			}else if (e.getActionCommand()=="hold"){
 				new processHold();
 			}else if (e.getActionCommand()=="pay"){
-
+				new PayFines();
 			}
 		}
 	}

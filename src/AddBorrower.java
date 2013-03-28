@@ -81,6 +81,7 @@ public class AddBorrower {
 		                    public void windowClosing(WindowEvent we) {
 		                
 		                        successFrame.setVisible(false);
+		                        insertFrame.dispose();
 		                    }
 		                } );
 		        	}

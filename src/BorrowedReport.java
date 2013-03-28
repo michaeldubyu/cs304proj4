@@ -59,7 +59,7 @@ public class BorrowedReport {
 		        			rowData[i] = s.toArray();
 		        			i++;
 		        		}
-		        		Object columnNames[] = { "Call Number", "Out Date", "In Date", "Overdue" };
+		        		Object columnNames[] = { "Call Number", "Title", "Copy Number", "Out Date", "In Date", "Overdue" };
 		        		JTable table = new JTable(rowData, columnNames);
 
 		        		JScrollPane scroll = new JScrollPane(table);
@@ -72,6 +72,8 @@ public class BorrowedReport {
 		                successFrame.addWindowListener( new WindowAdapter() {
 		                    public void windowClosing(WindowEvent we) {
 		                        successFrame.setVisible(false);
+		                        searchFrame.dispose();
+
 		                    }
 		                } );
 		        	}catch(Exception argException){
