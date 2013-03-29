@@ -206,7 +206,7 @@ public class BorrowerTable {
 			for (String transaction : borrowingID){
 				fineCheck = con.createStatement();
 				fineCheckRS = fineCheck.executeQuery("SELECT * FROM Fine WHERE boridid = " + transaction);
-				SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy 'at' h:mm a");
+				//SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy 'at' h:mm a");
 				if (fineCheckRS.next()){
 					//add it to the list of fines in result
 					String amount = fineCheckRS.getString("amount");
@@ -225,7 +225,7 @@ public class BorrowerTable {
 					}
 					else paidDate = "";
 				
-					ArrayList<String> oneFine = new ArrayList(3);
+					ArrayList<String> oneFine = new ArrayList<String>();
 					oneFine.add(0, amount);
 					oneFine.add(1, readableIssueDate.toString());
 					oneFine.add(2, paidDate);
@@ -358,24 +358,31 @@ public class BorrowerTable {
 	// Check his/her account. The system will display the items the borrower has currently borrowed 
 	// 		and not yet returned, any outstanding fines and the hold requests that have been placed by the borrower.
 	
-	static ArrayList checkOut(int bid)
+	public static ArrayList<ArrayList<String>> checkOut(String borrowerID)
 	{
-		
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		int bid = Integer.parseInt(borrowerID);
 		ResultSet outrs;
 		Statement outCheck;
-		ArrayList<ArrayList> outs = new ArrayList<ArrayList>();
+		ArrayList<ArrayList<String>> outs = new ArrayList<ArrayList<String>>();
 		
 		try{
 			
 			outCheck = con.createStatement();
 			
-			outrs = outCheck.executeQuery("SELECT callNumber, title, mainAuthor AS author,  FROM Book b WHERE"
-					+ "(SELECT * FROM Borrowing c where"
-					+ "c.bid = " + bid + " AND c.callNumber = b.callNumber AND c.inDate <> NULL)");			int i = 0;
+			outrs = outCheck.executeQuery("SELECT callNumber, title, mainAuthor AS author FROM Book b WHERE EXISTS "
+					+ "(SELECT * FROM Borrowing c WHERE "
+					+ "c.bid = '" + bid + "' AND c.callNumber = b.callNumber AND c.inDate IS NOT NULL)");
+			
+			int i = 0;
 			
 			while(outrs.next())
 			{
-				ArrayList elem = new ArrayList();
+				ArrayList<String> elem = new ArrayList<String>();
 				elem.add(0, outrs.getString("callNumber"));
 				elem.add(1, outrs.getString("title"));
 				elem.add(2, outrs.getString("author"));
@@ -390,21 +397,27 @@ public class BorrowerTable {
 		return outs;
 	}
 	
-	static ArrayList checkFines(int bid)
+	public static ArrayList<ArrayList<String>> checkFines(String borrowerID)
 	{
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		int bid = Integer.parseInt(borrowerID);
 		ResultSet finers;
 		Statement fineCheck;
-		ArrayList<ArrayList> fines = new ArrayList<ArrayList>();
+		ArrayList<ArrayList<String>> fines = new ArrayList<ArrayList<String>>();
 		
 		try{
 			
 			fineCheck = con.createStatement();
 			
-			finers = fineCheck.executeQuery("SELECT * FROM Fine f WHERE paidDate = NULL AND (SELECT * FROM Borrowing b WHERE bid = " + bid + " AND b.borid = f.borid)");
+			finers = fineCheck.executeQuery("SELECT * FROM Fine f WHERE paidDate IS NULL AND EXISTS (SELECT * FROM Borrowing b WHERE b.bid = '" + bid + "' AND b.borid = f.boridID)");
 			int i = 0;
 			while(finers.next())
 			{
-				ArrayList elem = new ArrayList();
+				ArrayList<String> elem = new ArrayList<String>();
 				elem.add(0, finers.getString("amount"));
 				elem.add(1, finers.getString("issuedDate"));
 				fines.add(i, elem);
@@ -418,23 +431,29 @@ public class BorrowerTable {
 		return fines;
 	}
 	
-	static ArrayList checkHolds(int bid){
-		
+	public static ArrayList<ArrayList<String>> checkHolds(String borrowerID)
+	{
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		int bid = Integer.parseInt(borrowerID);
 		ResultSet holdrs;
 		Statement holdCheck;
-		ArrayList<ArrayList> holds = new ArrayList<ArrayList>();
+		ArrayList<ArrayList<String>> holds = new ArrayList<ArrayList<String>>();
 		
 		try{
 			
 			holdCheck = con.createStatement();
 			
-			holdrs = holdCheck.executeQuery("(SELECT callNumber, issuedDate FROM HoldRequest h WHERE h.bid = " + bid + ")" +
-					"UNION" +
-					"(SELECT callNumber, title FROM Book b WHERE b.callNumber = h.callNumber)");
+			holdrs = holdCheck.executeQuery("SELECT h.callNumber, h.issuedDate, b.title FROM " +
+												"HoldRequest h, Book b WHERE " +
+												"h.callNumber = b.callNumber and h.bid = " + bid);
 			int i = 0;
 			while(holdrs.next())
 			{
-				ArrayList elem = new ArrayList();
+				ArrayList<String> elem = new ArrayList<String>();
 				elem.add(0, holdrs.getString("callNumber"));
 				elem.add(1, holdrs.getString("title"));
 				elem.add(2, holdrs.getString("issuedDate"));
