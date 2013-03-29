@@ -1,5 +1,7 @@
 import java.awt.Button;
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
@@ -51,7 +53,8 @@ public class CheckAccount {
 	        		//if (result.size()==0) throw new Exception("There were no results for your query. Please try again.");
 	        		
 	        		final Frame successFrame = new Frame("Results");
-	        		successFrame.setLayout(new GridLayout(6,1));
+	        		successFrame.setLayout(new GridBagLayout());
+	        		//successFrame.getParent().setSize(80, 10);
 
 	        		//callnumber, name, count
 	        		Object outrowData[][] = new Object[outResult.size()][3];
@@ -97,7 +100,7 @@ public class CheckAccount {
 
 		        	JScrollPane fineScroll = new JScrollPane(finetable);
 		        		
-		        	//successFrame.add(fineScroll);
+		        	successFrame.add(fineScroll);
 		        	
 		        	successFrame.pack();
 		        	successFrame.setVisible(true);
