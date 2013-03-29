@@ -97,35 +97,16 @@ public class Reports {
 		
 		try 
 		{
-			/*
-			if (subject.equals(""))
-			{
-				System.out.println("empty string");
+
 				stmt = con.createStatement();
-				//rs = stmt.executeQuery("SELECT * FROM borrowing ORDER BY callNumber ASC");
 				
-				rs = stmt.executeQuery("SELECT o.callnumber, b1.title, b2.copyNo, o.outDate, o.inDate "+
-										"FROM borrowing o, book b1, bookCopy b2  " +
-										"WHERE o.callNumber = b1.callNumber AND b1.callNumber = b2.callNumber " +
-										"ORDER BY o.callNumber ASC");
-				
-			}
-			
-			else
-			{
-				System.out.println("non-empty string");
-				*/
-				stmt = con.createStatement();
-				//rs = stmt.executeQuery("SELECT * FROM (SELECT * FROM borrowing o, hasSubject s WHERE "+
-				//                       "s.subject = "+subject+" AND o.callNumber = s.callNumber)" + 
-				//		               "ORDER BY callNumber ASC");
 				rs = stmt.executeQuery("SELECT DISTINCT o.callnumber, b1.title, b2.copyNo, o.outDate, o.inDate, b3.btype "+
 										"FROM borrowing o, book b1, bookCopy b2, borrower b3, hasSubject s " +
 										"WHERE o.callNumber = b1.callNumber AND b1.callNumber = b2.callNumber "+
 										"AND s.subject LIKE '%"+subject+"%' AND o.bid = b3.bid "+
 										"ORDER BY o.callNumber ASC");
 				
-			//}
+			
 			
 			while(rs.next())
 			{
