@@ -213,7 +213,7 @@ public class BorrowerTable {
 					String issuedDate = fineCheckRS.getString("issueddate");
 					String paidDate = fineCheckRS.getString("paiddate");
 					
-					//TODO: If it can get working, uncommment the other stuff
+					//TODO: If it can get working, uncomment the other stuff
 					//Date readableIssueDate = new Date(Long.parseLong(issuedDate));
 					Date readableIssueDate = new Date(Long.parseLong(issuedDate));
 					Date readablePaidDate;
@@ -357,26 +357,95 @@ public class BorrowerTable {
 	
 	// Check his/her account. The system will display the items the borrower has currently borrowed 
 	// 		and not yet returned, any outstanding fines and the hold requests that have been placed by the borrower.
-	public static void checkAccount(int bid){
-		try {
-			con = db_helper.connect("ora_i7f7", "a71163091");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	
+	static ArrayList checkOut(int bid)
+	{
 		
-		ResultSet rs;
-		Statement stmt;
+		ResultSet outrs;
+		Statement outCheck;
+		ArrayList<ArrayList> outs = new ArrayList<ArrayList>();
 		
 		try{
-			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM Book b WHERE"
-										+ "(SELECT * FROM Borrowing c where"
-										+ "c.bid = bid AND c.callNumber = b.callNumber)");
 			
-		}catch(Exception e)
-		{
+			outCheck = con.createStatement();
+			
+			outrs = outCheck.executeQuery("SELECT callNumber, title, mainAuthor AS author,  FROM Book b WHERE"
+					+ "(SELECT * FROM Borrowing c where"
+					+ "c.bid = " + bid + " AND c.callNumber = b.callNumber AND c.inDate <> NULL)");			int i = 0;
+			
+			while(outrs.next())
+			{
+				ArrayList elem = new ArrayList();
+				elem.add(0, outrs.getString("callNumber"));
+				elem.add(1, outrs.getString("title"));
+				elem.add(2, outrs.getString("author"));
+				outs.add(i, elem);
+			}
+			
+		}catch(Exception e){
 			e.printStackTrace();
 		}
+
+
+		return outs;
+	}
+	
+	static ArrayList checkFines(int bid)
+	{
+		ResultSet finers;
+		Statement fineCheck;
+		ArrayList<ArrayList> fines = new ArrayList<ArrayList>();
 		
+		try{
+			
+			fineCheck = con.createStatement();
+			
+			finers = fineCheck.executeQuery("SELECT * FROM Fine f WHERE paidDate = NULL AND (SELECT * FROM Borrowing b WHERE bid = " + bid + " AND b.borid = f.borid)");
+			int i = 0;
+			while(finers.next())
+			{
+				ArrayList elem = new ArrayList();
+				elem.add(0, finers.getString("amount"));
+				elem.add(1, finers.getString("issuedDate"));
+				fines.add(i, elem);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+
+		return fines;
+	}
+	
+	static ArrayList checkHolds(int bid){
+		
+		ResultSet holdrs;
+		Statement holdCheck;
+		ArrayList<ArrayList> holds = new ArrayList<ArrayList>();
+		
+		try{
+			
+			holdCheck = con.createStatement();
+			
+			holdrs = holdCheck.executeQuery("(SELECT callNumber, issuedDate FROM HoldRequest h WHERE h.bid = " + bid + ")" +
+					"UNION" +
+					"(SELECT callNumber, title FROM Book b WHERE b.callNumber = h.callNumber)");
+			int i = 0;
+			while(holdrs.next())
+			{
+				ArrayList elem = new ArrayList();
+				elem.add(0, holdrs.getString("callNumber"));
+				elem.add(1, holdrs.getString("title"));
+				elem.add(2, holdrs.getString("issuedDate"));
+				holds.add(i, elem);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+
+		return holds;
 	}
 }
