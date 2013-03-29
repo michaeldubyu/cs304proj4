@@ -40,29 +40,13 @@ public class BorrowingTable {
 			while (rs.next()) {
 				userType = rs.getString("btype").trim().toLowerCase();
 			}
-			
-			//try to cast L indate to a time
-			switch (userType){
-				case("student"):
-					inDate = outDate + 1209600; //2 weeks in seconds we add on
-					break;
-				case("faculty"):
-					inDate = outDate + 7257600; //12 weeks
-					break;
-				case("staff"):
-					inDate = outDate + 3628800; //6 weeks
-					break;
-			}
-		}catch (NumberFormatException e){
-			throw new IllegalArgumentException("In date is not of valid format - needs to be numbers and nonempty.");				
-		}catch (Exception e) {}
+		
 		
 		if (userType == null) throw new IllegalArgumentException("User does not exist!");
 		
 		PreparedStatement  ps;
 
-		try
-		{
+
 			ps = con.prepareStatement("INSERT INTO borrowing (bid, callnumber, copyno, outdate, indate) VALUES (?,?,?,?,?)");
 			
 			//set bid - at this point its already validated, so no longer need to run regex through it
@@ -84,20 +68,19 @@ public class BorrowingTable {
 			ps.setString(4, Long.toString(outDate));
 			
 			//set inDate - also guaranteed to be of integer in string format at this point
-			ps.setString(5, Long.toString(inDate));
+			ps.setString(5, null);
 						
 			ps.executeUpdate();
 			
-			Statement s = con.createStatement();
-			ResultSet rs = s.executeQuery("SELECT borid FROM borrowing WHERE bid = '" + bid + "' AND callnumber = '" + callNumber +
+			Statement s1 = con.createStatement();
+			ResultSet rs1 = s1.executeQuery("SELECT borid FROM borrowing WHERE bid = '" + bid + "' AND callnumber = '" + callNumber +
 										"' AND indate = '" + inDate + "'");
-			while (rs.next()) transID = Integer.parseInt(rs.getString("borid"));
+			while (rs1.next()) transID = Integer.parseInt(rs1.getString("borid"));
 			
 			con.commit();
 			con.close();
-		}
 		
-		catch (SQLException ex)
+		}catch (SQLException ex)
 		{
 		    System.out.println("Message: " + ex.getMessage());
 		    try 

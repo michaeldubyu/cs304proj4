@@ -88,13 +88,19 @@ public class AddBook {
 					sub3 = subjectsArray.get(2);
 				try {
 					BookTable.insertBook(callNumber.getText(), isbn.getText(), title.getText(), mainAuthor.getText(), publisher.getText(), year.getText(), amount.getText(), sub1, sub2, sub3);
-					final Frame successFrame = new Frame("Error!");
+					final Frame successFrame = new Frame("Success!");
+					Label success = new Label("Book was successfully added!");
+					successFrame.add(success);
 					successFrame.pack();
 					successFrame.setVisible(true);
 					successFrame.setAlwaysOnTop(true);
 					successFrame.setLocationRelativeTo(bookFrame);
-					
-				} catch (IllegalArgumentException err) {
+					successFrame.addWindowListener( new WindowAdapter() {
+						public void windowClosing(WindowEvent we) {
+							successFrame.setVisible(false);
+						}
+					} );
+				} catch (Exception err) {
 					final Frame errorFrame = new Frame("Error!");
 					Label error = new Label(err.getMessage());
 					errorFrame.add(error);
@@ -104,7 +110,6 @@ public class AddBook {
 					errorFrame.setLocationRelativeTo(bookFrame);
 					errorFrame.addWindowListener( new WindowAdapter() {
 						public void windowClosing(WindowEvent we) {
-
 							errorFrame.setVisible(false);
 						}
 					} );

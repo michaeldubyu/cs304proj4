@@ -131,9 +131,8 @@ public class BookTable {
 	}
 	
 	public static void insertBook(String callNumber, String isbn, String title,
-			String mainAuthor,String publisher,String year, String subject1,
-			String subject2, String subject3, String amount) 
-			throws IllegalArgumentException
+			String mainAuthor,String publisher,String year, String amount, String... subjects) 
+			throws IllegalArgumentException, Exception
 	{
 		ResultSet  rs;
 		PreparedStatement ps;
@@ -144,10 +143,7 @@ public class BookTable {
 			
 			ps = con.prepareStatement("INSERT INTO book VALUES (?,?,?,?,?,?)");
 			
-			if ((!((callNumber.matches(".*\\d.*"))&&(!callNumber.matches("^\\d*$"))))||callNumber.equals(""))
-				throw new IllegalArgumentException("Invalid Call Number, it should only have a number ");
-			else
-				ps.setString(1, callNumber);
+			ps.setString(1, callNumber);
 			
 			if ( (isbn.length()!=10) || (!isbn.matches(".*\\d.*")) )
 				throw new IllegalArgumentException("ISBN must be 10 digits");
@@ -170,24 +166,21 @@ public class BookTable {
 			
 			con.commit();
 			
-			
 			try
 			{
-				if (!subject1.equals(""))
-					HasSubjectTable.insertHasSubject(callNumber, subject1);
-				if (!subject2.equals(""))
-					HasSubjectTable.insertHasSubject(callNumber, subject2);
-				if (!subject2.equals(""))
-					HasSubjectTable.insertHasSubject(callNumber, subject3);
+				for (String s : subjects){
+					if (!s.equals(""))HasSubjectTable.insertHasSubject(callNumber, s);
+					System.out.println(s);
+				}
 			} catch (SQLException e1){
 				con.rollback();	
-				throw e1;
+				throw new IllegalArgumentException("Problem inserting subjects.");
 	    	} 
 			
 			insertCopy(callNumber, true);
 	    
 		
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			
 			//DO SOMETHING WITH THIS EXCEPTION
