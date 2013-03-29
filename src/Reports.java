@@ -119,20 +119,34 @@ public class Reports {
 				//rs = stmt.executeQuery("SELECT * FROM (SELECT * FROM borrowing o, hasSubject s WHERE "+
 				//                       "s.subject = "+subject+" AND o.callNumber = s.callNumber)" + 
 				//		               "ORDER BY callNumber ASC");
-				rs = stmt.executeQuery("SELECT o.callnumber, b1.title, b2.copyNo, o.outDate, o.inDate "+
-										"FROM borrowing o, book b1, bookCopy b2, hasSubject s " +
-										"WHERE o.callNumber = b1.callNumber AND b1.callNumber = b2.callNumber AND s.subject LIKE '%"+subject+"%' "+
+				rs = stmt.executeQuery("SELECT DISTINCT o.callnumber, b1.title, b2.copyNo, o.outDate, o.inDate, b3.btype "+
+										"FROM borrowing o, book b1, bookCopy b2, borrower b3, hasSubject s " +
+										"WHERE o.callNumber = b1.callNumber AND b1.callNumber = b2.callNumber "+
+										"AND s.subject LIKE '%"+subject+"%' AND o.bid = b3.bid "+
 										"ORDER BY o.callNumber ASC");
 				
 			//}
 			
 			while(rs.next())
 			{
+				
+				long outDate = Long.valueOf(rs.getString(4)).longValue();
+				String borrowerType = rs.getString(6);
+				  
+				boolean studentOverdue = borrowerType.toLowerCase().trim().equals("student") & 
+						  outDate + 2*604800 < CURRENT_TIME ; 
+				  
+				boolean staffOverdue = borrowerType.toLowerCase().trim().equals("staff") & 
+						  outDate + 6*604800 < CURRENT_TIME ; 
+				  
+				boolean facultyOverdue = borrowerType.toLowerCase().trim().equals("faculty") & 
+						  outDate + 12*604800 < CURRENT_TIME ; 
+				
+				
 				ArrayList<String> aBorrowing = new ArrayList<String>();
 				String overdue = "";
-				int inDate = Integer.parseInt(rs.getString(5));
 					
-				if (CURRENT_TIME > inDate)
+				if (studentOverdue || staffOverdue || facultyOverdue)
 					overdue = "Item Overdue";
 				aBorrowing.add(rs.getString(1));	
 				aBorrowing.add(rs.getString(2));
