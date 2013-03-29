@@ -7,7 +7,7 @@ public class BorrowingTable {
 	private static Connection con;
 	
 	private static final String[] attNames = 
-		{"bid", "name", "title", "inDate", "emailAddress"}; 
+		{"bid", "name", "title", "outDate", "emailAddress", "btype"}; 
 	
 	private static final long CURRENT_TIME = (System.currentTimeMillis() / 1000L);
 	
@@ -130,23 +130,40 @@ public class BorrowingTable {
 		try {
 			
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT b1.bid, b2.name, b3.title, b1.inDate, b2.emailAddress " +
+			rs = stmt.executeQuery("SELECT b1.bid, b2.name, b3.title, b1.outDate, b2.emailAddress, b2.btype " +
 								   "FROM borrowing b1, borrower b2, book b3, bookCopy b4 " +
-								   "WHERE b1.bid=b2.bid AND b1.callNumber = b3.callNumber AND b3.callNumber = b4.callNumber");
+								   "WHERE b1.bid=b2.bid AND b1.callNumber = b3.callNumber AND "+ 
+								   "b3.callNumber = b4.callNumber AND b1.indate is NULL");
 			
 			 while(rs.next())
 			  {  
+				 
+				  // Number of seconds in a week is 604800
+				  // Students = 2 weeks, Staff = 6 weeks, Faculty = 12 weeks
 				  
-				  long inDate = Long.valueOf(rs.getString(6)).longValue();
+				  long outDate = Long.valueOf(rs.getString(4)).longValue();
+				  String borrowerType = rs.getString(6);
 				  
-				  if (inDate<CURRENT_TIME)
+				  boolean studentOverdue = borrowerType.toLowerCase().trim().equals("student") & 
+						  outDate + 2*604800 < CURRENT_TIME ; 
+				  
+				  boolean staffOverdue = borrowerType.toLowerCase().trim().equals("staff") & 
+						  outDate + 6*604800 < CURRENT_TIME ; 
+				  
+				  boolean facultyOverdue = borrowerType.toLowerCase().trim().equals("faculty") & 
+						  outDate + 12*604800 < CURRENT_TIME ; 
+				  
+				  
+				  
+				  if (studentOverdue || staffOverdue || facultyOverdue)
 				  {
 					  ArrayList<String> aBorrowing = new ArrayList<String>();
 					  
 					  for (String anAttribute: attNames)
-						  {
+					  {
 						  aBorrowing.add(rs.getString(anAttribute));
 					  }
+					  
 					  result.add(aBorrowing);
 				  }
 				
