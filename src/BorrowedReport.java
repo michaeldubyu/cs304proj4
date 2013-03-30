@@ -59,7 +59,7 @@ public class BorrowedReport {
 		        			rowData[i] = s.toArray();
 		        			i++;
 		        		}
-		        		Object columnNames[] = { "Call Number", "Title", "Copy Number", "Out Date", "In Date", "Overdue" };
+		        		Object columnNames[] = { "Call Number", "Title", "Copy Number", "Out Date", "Due Date", "Overdue" };
 		        		JTable table = new JTable(rowData, columnNames);
 
 		        		JScrollPane scroll = new JScrollPane(table);
