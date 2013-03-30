@@ -45,8 +45,10 @@ public class CheckOutBook {
 	        	try{
 		        	int transID = BorrowingTable.insertBorrowing(bid.getText(), 
 		        			callNo.getText(), copyNo.getText());
-		        	final Frame successFrame = new Frame("Success!");
-	        		Label success = new Label("Check out successful! Transaction ID : " + transID + ".");
+		        	final Frame successFrame = new Frame("Check out");
+	        		String msg = "Check out successful! Transaction ID : " + transID + ".";
+	        		if (transID == -1) msg = "There was a problem retrieving the transaction ID after the request. Please try again!";
+		        	Label success = new Label(msg);
 	        		successFrame.add(success);
 	        		successFrame.pack();
 	        		successFrame.setVisible(true);

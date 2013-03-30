@@ -39,10 +39,10 @@ public class AddBook {
 		Label authorLabel = new Label("Main Author: ");
 		Label publisherLabel = new Label("Publisher: ");
 		Label yearLabel = new Label("Year Published: ");
-		Label amountLabel = new Label("Amount: ");
+		Label amountLabel = new Label("Number of Copies: ");
 		Label subjectsLabel = new Label("Subjects: ");
 
-		bookFrame.setLayout(new GridLayout(3,1));		
+		bookFrame.setLayout(new GridLayout(9,2));		
 		bookFrame.add(callLabel);
 		bookFrame.add(callNumber);
 		bookFrame.add(isbnLabel);
@@ -59,9 +59,11 @@ public class AddBook {
 		bookFrame.add(amount);
 		bookFrame.add(subjectsLabel);
 		bookFrame.add(subjects);
+	
 
 		btnAdd = new Button("Finish Adding the Book");
 		btnAdd.setActionCommand("add book");
+		bookFrame.add(new Label("Fill out all fields."));
 		bookFrame.add(btnAdd);
 		bookFrame.setLocationRelativeTo(m);
 		bookFrame.pack();

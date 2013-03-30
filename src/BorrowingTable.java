@@ -23,7 +23,7 @@ public class BorrowingTable {
 			throws IllegalArgumentException
 	{
 		String userType = null;
-		long inDate = 0;
+		String inDate = null;
 		long outDate = System.currentTimeMillis()/1000;
 		int transID = -1;
 		
@@ -42,10 +42,9 @@ public class BorrowingTable {
 			}
 		
 		
-		if (userType == null) throw new IllegalArgumentException("User does not exist!");
-		
-		PreparedStatement  ps;
-
+			if (userType == null) throw new IllegalArgumentException("User does not exist!");
+			
+			PreparedStatement  ps;
 
 			ps = con.prepareStatement("INSERT INTO borrowing (bid, callnumber, copyno, outdate, indate) VALUES (?,?,?,?,?)");
 			
@@ -74,7 +73,7 @@ public class BorrowingTable {
 			
 			Statement s1 = con.createStatement();
 			ResultSet rs1 = s1.executeQuery("SELECT borid FROM borrowing WHERE bid = '" + bid + "' AND callnumber = '" + callNumber +
-										"' AND indate = '" + inDate + "'");
+										"' AND outdate = '" + outDate + "'");
 			while (rs1.next()) transID = Integer.parseInt(rs1.getString("borid"));
 			
 			con.commit();
