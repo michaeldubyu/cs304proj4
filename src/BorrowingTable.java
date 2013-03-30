@@ -76,6 +76,11 @@ public class BorrowingTable {
 										"' AND outdate = '" + outDate + "'");
 			while (rs1.next()) transID = Integer.parseInt(rs1.getString("borid"));
 			
+			//update bookcopy with this change
+			Statement updateBook;
+			updateBook = con.createStatement();
+			updateBook.executeUpdate("UPDATE bookcopy SET status = 'out' WHERE callnumber = '" + callNumber + "' AND copyno = '" + copyNo + "'");
+			
 			con.commit();
 			con.close();
 		

@@ -248,7 +248,7 @@ public class BorrowerTable {
 			con = db_helper.connect("ora_i7f7", "a71163091");
 			
 			holdCheck = con.createStatement();
-			holdCheckRS = holdCheck.executeQuery("SELECT * FROM HoldRequest WHERE callNumber = " + callNo);
+			holdCheckRS = holdCheck.executeQuery("SELECT * FROM HoldRequest WHERE callNumber = '" + callNo + "'");
 			
 			if (holdCheckRS.next()){
 				//if there is a next row at all, that is, if there exists a hold request
@@ -262,58 +262,85 @@ public class BorrowerTable {
 		
 	/*
 	 * Processes a book return. 0 is returned if the book is returned on time. 1 is returned if a fine was applied.
+	 * Return -1 if the book was never checked out.
 	 */
 	static int processReturn(String callNo, String copyNo)
 	{
-
-		long inDate = 0;
-		int borid = 0;
 		long curTime = System.currentTimeMillis()/1000;
+		long outDate = 0;
+		long dueDate = 0;
+		
 		try
-		{
-			ResultSet rs;
-			Statement s2;
-			PreparedStatement  ps;
-			PreparedStatement ps3;
-			
+		{	
 			con = db_helper.connect("ora_i7f7", "a71163091");
-
-			ps3 = con.prepareStatement("UPDATE BOOKCOPY SET STATUS = ? WHERE CALLNUMBER = ? AND COPYNO = ?");
-			ps3.setString(1, "in");
-			ps3.setString(2, callNo);
-			ps3.setString(3, copyNo);
-			ps3.executeUpdate();
 			
-  			s2 = con.createStatement();
-			rs = s2.executeQuery("SELECT * FROM Borrowing WHERE callNumber = " + callNo + " AND copyNo = " + copyNo);
-					
-			if(rs.next())
-			{
-				inDate = Long.valueOf(rs.getString("inDate")).longValue();
-				borid = Integer.parseInt(rs.getString("borid"));
-			} else return -1;
+			//check that the book is even out for this user, this callno/copyno combination
+			Statement check;
+			ResultSet checkRS;
+			check = con.createStatement();
+			checkRS = check.executeQuery("SELECT * FROM borrowing WHERE " +
+					"copyno = '" + copyNo + "' AND callnumber = '" + callNo + "' AND inDate IS NULL");
+			if (!checkRS.next()) return -1; //book was never checked out for this user
 			
+			check = con.createStatement();
+			checkRS = check.executeQuery("SELECT * FROM borrowing WHERE " +
+					"copyno = '" + copyNo + "' AND callnumber = '" + callNo + "' AND inDate IS NULL");
 			
-			if(curTime > inDate)
-			{
-				ps = con.prepareStatement("INSERT INTO Fine (amount, issuedDate, paidDate, boridId)" + 
-						"VALUES (?,?,?,?)");
-				ps.setInt(1, 5);
-				
-				ps.setString(2, String.valueOf(curTime));
-				
-				ps.setNull(3, java.sql.Types.VARCHAR);
-				
-				ps.setInt(4, borid);
-				
-				ps.executeUpdate();
-				con.commit();	
-				con.close();
-				
-				return 1;
+			String bid = "";
+			String borid = "";
+			while (checkRS.next()){
+				borid = checkRS.getString("borid");
+				bid = checkRS.getString("bid");
+				outDate = Long.parseLong(checkRS.getString("outdate"));
 			}
+			//there is a checkout entry, so now we need the indate to check when it was taken out and decide if its overdue
+			
+			//get bid type
+			Statement typeCheck;
+			ResultSet typeCheckRS;
+			typeCheck = con.createStatement();
+			typeCheckRS = check.executeQuery("SELECT btype FROM borrower WHERE bid = '" + bid + "'");
+			
+			//have their type now, now compute due dates
+			String btype = "";
+			while (typeCheckRS.next()) btype = typeCheckRS.getString("btype");
+			
+			if (btype.toLowerCase().trim().equals("student")) dueDate = outDate + 2*604800;
+			if (btype.toLowerCase().trim().equals("faculty")) dueDate = outDate + 6*604800;
+			if (btype.toLowerCase().trim().equals("staff")) dueDate = outDate + 12*604800;
+			
+			System.out.println(btype + " " + curTime + " " + dueDate + " " + outDate);
+
+			
+			if (curTime > dueDate){
+				//the book is overdue, we need to apply a fine
+				PreparedStatement fine;
+				fine = con.prepareStatement("INSERT INTO FINE (amount, issueddate, paiddate, boridid) VALUES " +
+						"(?,?,?,?)");
+				
+				fine.setString(1, "5");
+				fine.setString(2, String.valueOf(curTime));
+				fine.setString(3, null);
+				fine.setString(4, borid);
+				
+				fine.execute();
+				con.commit();
+				
+			}
+			
+			//finally, we set the status of the book, from out, to in
+			
+			Statement updateStatement;
+			updateStatement = con.createStatement();
+			updateStatement.executeUpdate("UPDATE bookcopy SET status = 'in' WHERE callnumber = '" + callNo + "' AND copyno = '" + copyNo + "'");
+			
+			Statement inUpdate;
+			inUpdate = con.createStatement();
+			inUpdate.executeUpdate("UPDATE borrowing SET indate = '" + curTime + "' WHERE callnumber = '" + callNo + "' AND copyno = '" + copyNo + "'");
+			
 		} catch (Exception e){e.printStackTrace();}
-		return 0;
+		if (curTime > dueDate) return 1;
+		else return 0;
 
 		
 	}

@@ -13,12 +13,16 @@ public class ProcessRet {
 		final Frame insertFrame = new Frame();
 		final JTextField callNo = new JTextField(20);
 		final JTextField copyNo = new JTextField(20);
+		final JTextField bid = new JTextField(20);
 		
 		insertFrame.setLayout(new GridLayout(3,2));
 
 		Label callNoLabel = new Label("Call No* :");
 		Label copyNoLabel = new Label("Copy No* :");
+		Label bidLabel = new Label("Borrower ID* :");
 
+		//insertFrame.add(bidLabel);
+		//insertFrame.add(bid);		
 		insertFrame.add(callNoLabel);
 		insertFrame.add(callNo);
 		insertFrame.add(copyNoLabel);
@@ -39,10 +43,10 @@ public class ProcessRet {
 	        	try{
 	        		int fine = BorrowerTable.processReturn(callNo.getText(), copyNo.getText());
 	        		final Frame fineFrame = new Frame("Book Returns.");
-	        		String msg;
+	        		String msg = "";
 	        		if (fine==1) msg = "This book was late! A fine has been applied.";
 	        		else if (fine==0) msg = "Book successfully returned.";
-	        		else msg = "Error! Book was never checked out!";
+	        		else if (fine==-1) msg = "Error! Book was never checked out!";
 
 	        		Label error = new Label(msg);
 	        		fineFrame.add(error);
