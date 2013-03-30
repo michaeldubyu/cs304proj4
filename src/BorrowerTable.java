@@ -1,6 +1,10 @@
-import java.io.IOException;
-import java.sql.*;
-import java.text.SimpleDateFormat;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class BorrowerTable {
@@ -128,6 +132,9 @@ public class BorrowerTable {
 		return borid;
 	}
 	
+	
+	
+	
 		//Display all borrowers in the database
 		public static ArrayList<ArrayList<String>> showBorrowers()
 	    {
@@ -178,6 +185,10 @@ public class BorrowerTable {
 		}	
 		return result;
     }
+		
+		
+		
+		
 		
 		/**
 		 * Checks all borrowing, for given bid, then for each transaction, is there a fine in the finetable?
@@ -260,6 +271,7 @@ public class BorrowerTable {
 		return holdExists;
 	}
 		
+	
 	/*
 	 * Processes a book return. 0 is returned if the book is returned on time. 1 is returned if a fine was applied.
 	 * Return -1 if the book was never checked out.
