@@ -1,10 +1,6 @@
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.IOException;
+import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class BorrowerTable {
@@ -79,7 +75,7 @@ public class BorrowerTable {
 			  
 			  //Set sinOrstNo
 			  if ((!sinOrStNo.matches("^\\d*$"))||sinOrStNo.equals(""))
-				  throw new IllegalArgumentException("Invalid SIN or Student Number");
+				  throw new IllegalArgumentException("Invalid SIN or Student Number, we're seeing you entered "+ sinOrStNo);
 			  else
 			  {
 				  int s = Integer.parseInt(sinOrStNo);
@@ -87,8 +83,11 @@ public class BorrowerTable {
 			  }
 			  
 			  //Set Expiry Date
+			  int currentUnixTime = (int) (System.currentTimeMillis() / 1000L);
+			  if ( Integer.parseInt(expiryDate) < currentUnixTime)
+				  throw new IllegalArgumentException("The expirary date must be after the current date, current date is " +currentUnixTime);
 			  if (!expiryDate.matches("^\\d*$")||expiryDate.equals(""))
-				  throw new IllegalArgumentException("Needs to be UNIX time bro");
+				  throw new IllegalArgumentException("Needs to be UNIX time bro, the current UNIX time is "+ currentUnixTime);
 			  else
 			  {
 				  int d = Integer.parseInt(expiryDate);
@@ -98,7 +97,7 @@ public class BorrowerTable {
 			  //Set Type
 			  String lc_type = type.trim().toLowerCase();
 			  if (! ((lc_type.equals("faculty"))||(lc_type.equals("staff"))||(lc_type.equals("student"))))
-				  throw new IllegalArgumentException("Invalid Borrower Type");
+				  throw new IllegalArgumentException("Invalid Borrower Type, types can be faculty, staff, or student");
 			  else
 				  ps.setString(8, type);
 			  
@@ -131,9 +130,6 @@ public class BorrowerTable {
 			}
 		return borid;
 	}
-	
-	
-	
 	
 		//Display all borrowers in the database
 		public static ArrayList<ArrayList<String>> showBorrowers()
@@ -186,10 +182,6 @@ public class BorrowerTable {
 		return result;
     }
 		
-		
-		
-		
-		
 		/**
 		 * Checks all borrowing, for given bid, then for each transaction, is there a fine in the finetable?
 		 * @param bid
@@ -208,8 +200,10 @@ public class BorrowerTable {
 			con = db_helper.connect("ora_i7f7", "a71163091");
 			
 			borCheck = con.createStatement();
+			//TODO: Jonathan: should we do; WHERE paidDate IS NULL
 			borCheckRS = borCheck.executeQuery("SELECT * FROM Borrowing WHERE bid = " + bid);
-			
+			//TODO: Jonathan: this is an improper/useless use of a while loop, should be hasNext and the next statement should always be .next()
+
 			while (borCheckRS.next()){
 				borrowingID.add(borCheckRS.getString("borid"));
 			}
@@ -225,12 +219,10 @@ public class BorrowerTable {
 					String paidDate = fineCheckRS.getString("paiddate");
 					
 					//TODO: If it can get working, uncomment the other stuff
-					//Date readableIssueDate = new Date(Long.parseLong(issuedDate));
 					Date readableIssueDate = new Date(Long.parseLong(issuedDate));
 					Date readablePaidDate;
 		
 					if (paidDate != null){
-						//readablePaidDate = new Date(Long.parseLong(paidDate));
 						readablePaidDate = new Date(Long.parseLong(paidDate));
 						paidDate = readablePaidDate.toString();
 					}
@@ -271,7 +263,6 @@ public class BorrowerTable {
 		return holdExists;
 	}
 		
-	
 	/*
 	 * Processes a book return. 0 is returned if the book is returned on time. 1 is returned if a fine was applied.
 	 * Return -1 if the book was never checked out.
