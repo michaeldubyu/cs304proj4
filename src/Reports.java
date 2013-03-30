@@ -47,7 +47,7 @@ public class Reports {
 				"Select t1.title, t2.callNumber, t2.qty FROM book t1, "+
 				"(SELECT b1.callNumber, COUNT(*) as qty FROM book b1, " +
 				"(SELECT * FROM borrowing WHERE outDate >= "+yearStart+
-				" AND inDate <= "+yearEnd+") b2 " +
+				" AND outDate <= "+yearEnd+") b2 " +
 				"WHERE b1.callNumber = b2.callNumber "+
 				"GROUP BY b1.callNumber ORDER BY qty DESC) t2 "+
 				"WHERE t1.callNumber = t2.callNumber"
