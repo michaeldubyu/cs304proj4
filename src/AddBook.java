@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.JTextField;
 
@@ -75,21 +73,11 @@ public class AddBook {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String subjectText = subjects.getText();
-				List<String> subjectsArray = Arrays.asList(subjectText.trim().split("\\s*,\\s*"));
-				//TODO: do error checking on these
-				int numSubs = subjectsArray.size();
-				String sub1, sub2, sub3;
-				sub1 = "";
-				sub2 = "";
-				sub3 = "";
-				if(numSubs > 0)
-					sub1 = subjectsArray.get(0);
-				if(numSubs > 1)
-					sub2 = subjectsArray.get(1);
-				if(numSubs > 2)
-					sub3 = subjectsArray.get(2);
+				// This will now work for 1 or more subjects! :)
+				String[] subjectsArray = subjectText.trim().split("\\s*,\\s*");
+				// TODO: Should it be at least 1?
 				try {
-					BookTable.insertBook(callNumber.getText(), isbn.getText(), title.getText(), mainAuthor.getText(), publisher.getText(), year.getText(), amount.getText(), sub1, sub2, sub3);
+					BookTable.insertBook(callNumber.getText(), isbn.getText(), title.getText(), mainAuthor.getText(), publisher.getText(), year.getText(), amount.getText(),subjectsArray);
 					final Frame successFrame = new Frame("Success!");
 					Label success = new Label("Book was successfully added!");
 					successFrame.add(success);
@@ -100,6 +88,7 @@ public class AddBook {
 					successFrame.addWindowListener( new WindowAdapter() {
 						public void windowClosing(WindowEvent we) {
 							successFrame.setVisible(false);
+							bookFrame.dispose();
 						}
 					} );
 				} catch (Exception err) {
@@ -116,9 +105,7 @@ public class AddBook {
 						}
 					} );
 				}
-				//TODO: This shouldn't be here
-				//BookTable.insertBook(callNumber.getText(), isbn.getText(), title.getText(), mainAuthor.getText(), publisher.getText(), year.getText(), amount.getText(), sub1, sub2, sub3);
-				bookFrame.dispose();
+				//bookFrame.dispose();
 			}
 		});
 		bookFrame.addWindowListener( new WindowAdapter(){

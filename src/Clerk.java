@@ -4,6 +4,7 @@ import java.awt.event.*;
 
 public class Clerk {
 
+	final Frame clerkFrame;
 	/**
 	 * Instantiate the Clerk sub menus and structure.
 	 */
@@ -13,7 +14,7 @@ public class Clerk {
 		final Button processReturn;
 		final Button checkOverDue;
 		
-		final Frame clerkFrame = new Frame();
+		clerkFrame = new Frame();
 
 		ActionListener al = new MyActionListener();
 		
@@ -63,7 +64,7 @@ public class Clerk {
 			}else if (e.getActionCommand()=="return"){
 				new ProcessRet();
 			}else if (e.getActionCommand()=="check overdues"){
-				new CheckOverdues();
+				new CheckOverdues(clerkFrame);
 				System.out.println("check overdues");
 			}
 		}
