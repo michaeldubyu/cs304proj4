@@ -90,7 +90,7 @@ public class BookTable {
 		return results;
 	}
 	
-	public static void insertCopy(String callNumber, boolean firstBook) throws IllegalArgumentException
+	public static void insertCopy(String callNumber, boolean firstBook, int qty) throws IllegalArgumentException
 	{
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
@@ -105,39 +105,51 @@ public class BookTable {
 		try
 		{
 			stmt = con.createStatement();
-			rs1 = stmt.executeQuery("SELECT * FROM ItemCopy WHERE callNumber = '" + callNumber+"'");
+			rs1 = stmt.executeQuery("SELECT * FROM book WHERE callNumber = '" + callNumber+"'");
 			
-			if (!rs1.next()) 
+			if (!rs1.next() && !firstBook) 
 			{
 				throw new IllegalArgumentException("This call number doesn't exist in the library yet.  If you would like to add it, select 'Add Book'");
 			}
 			
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM ItemCopy WHERE callNumber = '" + callNumber+"'");
+			rs = stmt.executeQuery("SELECT * FROM bookcopy WHERE callNumber = '" + callNumber+"'");
 			
-			int copyNumber=0;
+			int copyNumber=1;
 			while(rs.next())
 			{
 				copyNumber++;
 			}
 			
+			int i = copyNumber;
 			
-			ps = con.prepareStatement("INSERT INTO BookCopy VALUES (" + callNumber + "," + copyNumber + ",\"in\")");
+			while(copyNumber<qty+i)
+			{
+
+				
+				//ps = con.prepareStatement("INSERT INTO BookCopy (callnumber, copyno, status) VALUES (" + callNumber + "," + copyNumber + ",\"in\")");
+				
+				ps = con.prepareStatement("INSERT INTO bookCopy VALUES (?,?,?)");
+				
+				System.out.println(callNumber);
+				System.out.println(copyNumber);
+				  
+				ps.setString(1, callNumber);
+				ps.setString(2, String.valueOf(copyNumber));
+				ps.setString(3, "in");
+				ps.executeUpdate();
 			
-			System.out.println(ps);
-			  
-			ps.executeUpdate();
-		
-			// commit work 
-			con.commit();
-		
-			ps.close();
-		}catch(SQLException e)
-		{
+				// commit work 
+				con.commit();
 			
-			/* TO BE IMPLEMENTED -- Shouldn't appear, but will allocate a response */
+				ps.close();
+				copyNumber++;
 			
-		}
+			}
+			}catch(SQLException e){
+					/* TO BE IMPLEMENTED -- Shouldn't appear, but will allocate a response */
+
+		 }
 	}
 	
 	public static void insertBook(String callNumber, String isbn, String title,
@@ -187,7 +199,7 @@ public class BookTable {
 				throw new IllegalArgumentException("Problem inserting subjects.");
 	    	} 
 			
-			insertCopy(callNumber, true);
+			insertCopy(callNumber, true, Integer.parseInt(amount));
 	    
 		
 		} catch (Exception e) {
