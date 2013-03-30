@@ -99,18 +99,28 @@ public class BookTable {
 		}
 		
 		ResultSet rs;
+		ResultSet rs1;
 		Statement stmt;
-		int copyNumber;
 		PreparedStatement  ps;		
 		try
 		{
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM ItemCopy WHERE callNumber = " + callNumber);
-			if(rs.getFetchSize() == 0 && !firstBook)
+			rs1 = stmt.executeQuery("SELECT * FROM ItemCopy WHERE callNumber = '" + callNumber+"'");
+			
+			if (!rs1.next()) 
 			{
 				throw new IllegalArgumentException("This call number doesn't exist in the library yet.  If you would like to add it, select 'Add Book'");
 			}
-			copyNumber = rs.getFetchSize() + 1;
+			
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM ItemCopy WHERE callNumber = '" + callNumber+"'");
+			
+			int copyNumber=0;
+			while(rs.next())
+			{
+				copyNumber++;
+			}
+			
 			
 			ps = con.prepareStatement("INSERT INTO BookCopy VALUES (" + callNumber + "," + copyNumber + ",\"in\")");
 			
