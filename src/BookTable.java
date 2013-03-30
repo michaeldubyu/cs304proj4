@@ -90,7 +90,7 @@ public class BookTable {
 		return results;
 	}
 	
-	public static void insertCopy(String callNumber, boolean firstBook, int qty) throws IllegalArgumentException
+	public static int insertCopy(String callNumber, boolean firstBook, int quantity) throws IllegalArgumentException
 	{
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
@@ -123,16 +123,13 @@ public class BookTable {
 			
 			int i = copyNumber;
 			
-			while(copyNumber<qty+i)
+			while(copyNumber<quantity+i)
 			{
 
 				
 				//ps = con.prepareStatement("INSERT INTO BookCopy (callnumber, copyno, status) VALUES (" + callNumber + "," + copyNumber + ",\"in\")");
 				
 				ps = con.prepareStatement("INSERT INTO bookCopy VALUES (?,?,?)");
-				
-				System.out.println(callNumber);
-				System.out.println(copyNumber);
 				  
 				ps.setString(1, callNumber);
 				ps.setString(2, String.valueOf(copyNumber));
@@ -150,6 +147,7 @@ public class BookTable {
 					/* TO BE IMPLEMENTED -- Shouldn't appear, but will allocate a response */
 
 		 }
+		return quantity;
 	}
 	
 	public static void insertBook(String callNumber, String isbn, String title,

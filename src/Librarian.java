@@ -11,22 +11,28 @@ public class Librarian {
 	 */
 	public Librarian(Frame m){
 		final Button addBook;
+		final Button addCopy;
 		final Button genCheckOutReport;
 		final Button genPopularReport;
 		final Frame librarianFrame = new Frame();
 		ActionListener al = new MyActionListener();
 		
-		librarianFrame.setLayout(new GridLayout(3,1));		
+		librarianFrame.setLayout(new GridLayout(4,1));
+		
 		addBook = new Button("Add a Book");
 		addBook.setActionCommand("add book");
 		addBook.addActionListener(al);
-
-
+		
+		addCopy = new Button("Add a Copy Of an Existing Book");
+		addCopy.setActionCommand("add copy");
+		addCopy.addActionListener(al);
+		
 		librarianFrame.add(addBook);		
+		librarianFrame.add(addCopy);
+		
 		genCheckOutReport = new Button("Generate a Report of Books on Loan");
 		genCheckOutReport.setActionCommand("checkout report");
 		genCheckOutReport.addActionListener(al);
-
 
 		librarianFrame.add(genCheckOutReport);
 		genPopularReport = new Button("Generate a Report of Popular Books");
@@ -54,6 +60,9 @@ public class Librarian {
 			if (e.getActionCommand()=="add book"){// && !addHasBeenCalled){
 				new AddBook(mainFrame);
 				addHasBeenCalled = true;
+			}
+			else if (e.getActionCommand() == "add copy"){
+				new AddCopy();
 			}
 			else if (e.getActionCommand()=="checkout report"){
 				new BorrowedReport();
