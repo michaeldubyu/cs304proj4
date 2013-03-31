@@ -21,7 +21,7 @@ public class BorrowerTable {
 	// our format for dates
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-	
+
 	//Insert a borrower into the table
 	//if successful, returns the borrower id, otherwise -1
 	public static int insertBorrower(String password, String name, String address, 
@@ -118,6 +118,7 @@ public class BorrowerTable {
 
 			// commit work 
 			con.commit();
+			con.close();
 
 		}
 		catch (SQLException ex)
@@ -177,6 +178,7 @@ public class BorrowerTable {
 			}
 
 			// close the statement; 
+			con.close();
 			// the ResultSet will also be closed
 			stmt.close();
 
@@ -188,11 +190,11 @@ public class BorrowerTable {
 		return result;
 	}
 
-	
-	
 
-	
-	
+
+
+
+
 	/**
 	 * Checks all borrowing, for given bid, then for each transaction, is there a fine in the finetable?
 	 * @param bid
@@ -212,12 +214,12 @@ public class BorrowerTable {
 
 			borCheck = con.createStatement();
 			//Get borid's that bid is associated with
-			 borCheckRS = borCheck.executeQuery("SELECT * FROM Borrowing WHERE bid = " + bid);
+			borCheckRS = borCheck.executeQuery("SELECT * FROM Borrowing WHERE bid = " + bid);
 
 			while (borCheckRS.next()){
 				borrowingID.add(borCheckRS.getString("borid"));
 			}
-			 
+
 			/*
 			 * For each borid, get 
 			 */
@@ -249,12 +251,13 @@ public class BorrowerTable {
 			}
 
 
+			con.close();
 		} catch (Exception e) {
 			new ErrorFrame("Couldn't get the fines working, try entering something different?", null);
 		}
 		return result;
 	}
-	
+
 	static boolean updatePaidDate(String fid, String date) throws IllegalArgumentException{
 		date = date.trim();
 		if(date.matches( "^\\d*$") || date.length() ==10) throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD");
@@ -270,6 +273,7 @@ public class BorrowerTable {
 			System.out.println("Number of rows effected: " + numOfQueriesEffected);
 			con.commit();
 			fineCheck.close();
+			con.close();
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -291,6 +295,7 @@ public class BorrowerTable {
 				//if there is a next row at all, that is, if there exists a hold request
 				holdExists = true;
 			}
+			con.close();
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -374,7 +379,8 @@ public class BorrowerTable {
 			Statement inUpdate;
 			inUpdate = con.createStatement();
 			inUpdate.executeUpdate("UPDATE borrowing SET indate = '" + curTime + "' WHERE callnumber = '" + callNo + "' AND copyno = '" + copyNo + "'");
-
+			con.commit();
+			con.close();
 		} catch (Exception e){e.printStackTrace();}
 		if (curTime > dueDate) return 1;
 		else return 0;
@@ -386,16 +392,12 @@ public class BorrowerTable {
 		int hid = -1;
 		try {
 			con = db_helper.connect("ora_i7f7", "a71163091");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 
-		ResultSet rs;
-		Statement stmt;
-		PreparedStatement  ps;
-		long date = System.currentTimeMillis()/1000;
+			ResultSet rs;
+			Statement stmt;
+			PreparedStatement  ps;
+			long date = System.currentTimeMillis()/1000;
 
-		try{
 			stmt = con.createStatement();
 			rs = stmt.executeQuery("SELECT COUNT(*) AS numin FROM BookCopy WHERE callNumber = '" + callNumber + "' AND status = 'in'");
 			rs.next();
@@ -412,6 +414,8 @@ public class BorrowerTable {
 			ps.setString(3, callNumber);
 			ps.setString(4, String.valueOf(date));
 			ps.executeUpdate();
+			con.commit();
+			con.close();
 		}catch(SQLException e)
 		{
 			e.printStackTrace();
@@ -424,17 +428,13 @@ public class BorrowerTable {
 
 	public static ArrayList<ArrayList<String>> checkOut(String borrowerID)
 	{
-		try {
-			con = db_helper.connect("ora_i7f7", "a71163091");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
 		int bid = Integer.parseInt(borrowerID);
 		ResultSet outrs;
 		Statement outCheck;
 		ArrayList<ArrayList<String>> outs = new ArrayList<ArrayList<String>>();
-
-		try{
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
 
 			outCheck = con.createStatement();
 
@@ -443,7 +443,6 @@ public class BorrowerTable {
 					+ "c.bid = '" + bid + "' AND c.callNumber = b.callNumber AND c.inDate IS NULL)");
 
 			int i = 0;
-
 			while(outrs.next())
 			{
 				ArrayList<String> elem = new ArrayList<String>();
@@ -451,29 +450,25 @@ public class BorrowerTable {
 				elem.add(1, outrs.getString("title"));
 				elem.add(2, outrs.getString("author"));
 				outs.add(i, elem);
+				i++;
 			}
-
+			con.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-
-
 		return outs;
 	}
 
 	public static ArrayList<ArrayList<String>> checkFines(String borrowerID)
 	{
-		try {
-			con = db_helper.connect("ora_i7f7", "a71163091");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
 		int bid = Integer.parseInt(borrowerID);
 		ResultSet finers;
 		Statement fineCheck;
 		ArrayList<ArrayList<String>> fines = new ArrayList<ArrayList<String>>();
 
-		try{
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
 
 			fineCheck = con.createStatement();
 
@@ -486,7 +481,7 @@ public class BorrowerTable {
 				elem.add(1, finers.getString("issuedDate"));
 				fines.add(i, elem);
 			}
-
+			con.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -497,18 +492,12 @@ public class BorrowerTable {
 
 	public static ArrayList<ArrayList<String>> checkHolds(String borrowerID)
 	{
-		try {
-			con = db_helper.connect("ora_i7f7", "a71163091");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 		int bid = Integer.parseInt(borrowerID);
 		ResultSet holdrs;
 		Statement holdCheck;
 		ArrayList<ArrayList<String>> holds = new ArrayList<ArrayList<String>>();
-
-		try{
-
+		try {
+			con = db_helper.connect("ora_i7f7", "a71163091");
 			holdCheck = con.createStatement();
 
 			holdrs = holdCheck.executeQuery("SELECT h.callNumber, h.issuedDate, b.title FROM " +
@@ -523,12 +512,10 @@ public class BorrowerTable {
 				elem.add(2, holdrs.getString("issuedDate"));
 				holds.add(i, elem);
 			}
-
+			con.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-
-
 		return holds;
 	}
 }
