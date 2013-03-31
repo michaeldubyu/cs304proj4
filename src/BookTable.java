@@ -152,6 +152,40 @@ public class BookTable {
 		}
 		return quantity;
 	}
+	
+	/*
+	 * Inserts an author record for a given callnumber.
+	 */
+	public static String addAuthor(String callNumber, String author) throws Exception{
+		String inserted = "";
+		Statement s;
+		con = db_helper.connect("ora_i7f7", "a71163091");
+		s = con.createStatement();
+		
+		Statement s2;
+		s2 = con.createStatement();
+		
+		ResultSet rs;
+		rs = s.executeQuery("SELECT * FROM BOOK WHERE callnumber = '" +  callNumber + "'");
+		if (!rs.next()) throw new IllegalArgumentException("This book doesn't exist!");
+		
+		ResultSet rs2;
+		rs2 = s2.executeQuery("SELECT * FROM HASAUTHOR WHERE callnumber = '" + callNumber + "' AND name = '" + author + "'");
+		if (rs2.next()) throw new IllegalArgumentException("This author already exists for this book!");
+		
+		PreparedStatement ps;
+		ps = con.prepareStatement("INSERT INTO HASAUTHOR VALUES (?,?)");
+		ps.setString(1,callNumber);
+		ps.setString(2,author);
+		
+		ps.executeUpdate();
+		con.commit();
+		con.close();
+
+		inserted = author;
+		
+		return inserted;
+	}
 
 	public static void insertBook(String callNumber, String isbn, String title,
 			String mainAuthor,String publisher,String year, String copiesAmount, String... subjects) 
@@ -183,9 +217,6 @@ public class BookTable {
 			throw new IllegalArgumentException("That's not a year, bro");
 		else
 			ps.setString(6, callNumber);
-
-
-
 		try
 		{
 			for (String s : subjects){
@@ -208,11 +239,6 @@ public class BookTable {
 		ps.executeUpdate();
 
 		con.commit();
-
-
-
-
-
-					}
+		}
 
 }
