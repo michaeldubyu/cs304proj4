@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -135,6 +136,8 @@ public class BorrowerTable {
 				System.exit(-1);
 			}
 		}
+		closeConnection();
+
 		return borid;
 			}
 
@@ -187,6 +190,7 @@ public class BorrowerTable {
 		{
 			System.out.println("Message: " + ex.getMessage());
 		}	
+		closeConnection();
 		return result;
 	}
 
@@ -255,19 +259,24 @@ public class BorrowerTable {
 		} catch (Exception e) {
 			new ErrorFrame("Couldn't get the fines working, try entering something different?", null);
 		}
+		closeConnection();
 		return result;
 	}
 
-	static boolean updatePaidDate(String fid, String date) throws IllegalArgumentException{
+	static boolean updatePaidDate(String fid, String date, String fineStartDate) throws IllegalArgumentException{
 		date = date.trim();
-		if(date.matches( "^\\d*$") || date.length() ==10) throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD");
+		if(date.matches( "^\\d*$")) throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD");
+		
 		Statement fineCheck = null;
-		try{ 
-			fineCheck = con.createStatement();
+			try {
+			
 			con = db_helper.connect("ora_i7f7", "a71163091");
+			fineCheck = con.createStatement();
 			//Convert the date to unix time
-			java.util.Date convertedDate = sdf.parse(date);
-			long time = convertedDate.getTime();
+			java.util.Date convertedPaidDate = sdf.parse(date);
+			java.util.Date convertedDate = sdf.parse(fineStartDate);
+			long time = convertedPaidDate.getTime();
+			if(time < convertedDate.getTime()) throw new IllegalArgumentException("Sorry, your paid date is less than the issued date");
 			String updateString = "UPDATE Fine SET paidDate = '" +time+"' WHERE fid = '" +fid+ "' ";
 			int numOfQueriesEffected = fineCheck.executeUpdate(updateString);
 			System.out.println("Number of rows effected: " + numOfQueriesEffected);
@@ -275,9 +284,21 @@ public class BorrowerTable {
 			fineCheck.close();
 			con.close();
 			return true;
-		}catch (Exception e){
-			e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD, try again");
+			}
+			closeConnection();
 			return false;
+	}
+
+	private static void closeConnection() {
+		try {
+			if (!con.isClosed())
+				con.close();
+		} catch (SQLException e) {
+			System.out.println("Dude, connection is giving us some trouble");
 		}
 	}
 
@@ -456,6 +477,7 @@ public class BorrowerTable {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		closeConnection();
 		return outs;
 	}
 
@@ -486,7 +508,7 @@ public class BorrowerTable {
 			e.printStackTrace();
 		}
 
-
+		closeConnection();
 		return fines;
 	}
 
@@ -516,6 +538,7 @@ public class BorrowerTable {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		closeConnection();
 		return holds;
 	}
 }
