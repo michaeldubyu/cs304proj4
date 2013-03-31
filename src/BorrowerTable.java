@@ -441,7 +441,7 @@ public class BorrowerTable {
 
 			outrs = outCheck.executeQuery("SELECT callNumber, title, mainAuthor AS author FROM Book b WHERE EXISTS "
 					+ "(SELECT * FROM Borrowing c WHERE "
-					+ "c.bid = '" + bid + "' AND c.callNumber = b.callNumber AND c.inDate IS NOT NULL)");
+					+ "c.bid = '" + bid + "' AND c.callNumber = b.callNumber AND c.inDate IS NULL)");
 
 			int i = 0;
 
