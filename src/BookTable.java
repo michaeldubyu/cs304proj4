@@ -193,10 +193,16 @@ public class BookTable {
 					{
 		ResultSet  rs;
 		PreparedStatement ps;
-
-
+		
 		con = db_helper.connect("ora_i7f7", "a71163091");
 
+		//primary key check
+		Statement s2;
+		ResultSet existRS;
+		s2 = con.createStatement();
+		existRS = s2.executeQuery("SELECT * FROM book WHERE callnumber = '" + callNumber + "'");
+		if (existRS.next()) throw new IllegalArgumentException("A book with this call number already exists!");
+		
 		ps = con.prepareStatement("INSERT INTO book VALUES (?,?,?,?,?,?)");
 
 		ps.setString(1, callNumber);
@@ -222,7 +228,6 @@ public class BookTable {
 			for (String s : subjects){
 				if (!s.equals("")){
 					HasSubjectTable.insertHasSubject(callNumber, s);
-					System.out.println(s);
 				}
 			}
 		} catch (SQLException e1){
