@@ -92,11 +92,8 @@ public class BorrowerTable {
 			}
 
 			//Set Expiry Date
-			int currentUnixTime = (int) (System.currentTimeMillis() / 1000L);
-			if ( Integer.parseInt(expiryDate) < currentUnixTime)
-				throw new IllegalArgumentException("The expirary date must be after the current date, current date is " +currentUnixTime);
 			if (!expiryDate.matches("^\\d*$")||expiryDate.equals(""))
-				throw new IllegalArgumentException("Needs to be UNIX time bro, the current UNIX time is "+ currentUnixTime);
+				throw new IllegalArgumentException("A valid UNIX time string is required.");
 			else
 			{
 				int d = Integer.parseInt(expiryDate);
