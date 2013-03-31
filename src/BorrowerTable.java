@@ -253,29 +253,31 @@ public class BorrowerTable {
 
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorFrame("Couldn't get the fines working, try entering something different?", null);
 		}
 		return result;
 	}
 	
-	static boolean insertPaidDate(String fid, String date) throws IllegalArgumentException{
-		ResultSet fineCheckRS;
-		if(date.matches("^\\d*$")) throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD");
-		try{
-			Statement fineCheck = con.createStatement();
+	static boolean updatePaidDate(String fid, String date) throws IllegalArgumentException{
+		date = date.trim();
+		if(date.matches( "^\\d*$") || date.length() ==10) throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD");
+		Statement fineCheck = null;
+		try{ 
+			fineCheck = con.createStatement();
 			con = db_helper.connect("ora_i7f7", "a71163091");
 			//Convert the date to unix time
 			java.util.Date convertedDate = sdf.parse(date);
 			long time = convertedDate.getTime();
-			//TODO: Is this inserting? Its not seeminly finishing.
-			fineCheckRS = fineCheck.executeQuery("UPDATE Fine SET paidDate = '" +time+"' WHERE fid = '" +fid+ "' ");
+			String updateString = "UPDATE Fine SET paidDate = '" +time+"' WHERE fid = '" +fid+ "' ";
+			int numOfQueriesEffected = fineCheck.executeUpdate(updateString);
+			System.out.println("Number of rows effected: " + numOfQueriesEffected);
 			con.commit();
+			fineCheck.close();
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
 			return false;
 		}
-		
 	}
 
 	static boolean checkHoldExists(String callNo){		

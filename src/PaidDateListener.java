@@ -25,7 +25,12 @@ public class PaidDateListener implements TableModelListener {
 		assert(fid instanceof String);
 		System.out.println("Table event happened! WOOO!");
 		
-		BorrowerTable.insertPaidDate((String) fid, (String)data);
+		try {
+			BorrowerTable.updatePaidDate((String) fid, (String)data);
+		} catch (IllegalArgumentException e1) {
+			
+			new ErrorFrame(e1.getLocalizedMessage(), null);
+		}
 			
 	}
 
