@@ -10,10 +10,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
-public class FinesTable extends JPanel {
+public class FinesGUITable extends JPanel {
 	private boolean DEBUG = false;
 	final JTable table;
-	public FinesTable(Object[][] fines) {
+	public FinesGUITable(Object[][] fines) {
 		super(new GridLayout(1,0));
 
 		String[] columnNames = {"Amount",
@@ -25,7 +25,8 @@ public class FinesTable extends JPanel {
 		//table = new JTable(data, columnNames);
 		table = new JTable();
 		table.setModel(new MyTableModel( data, columnNames));
-		
+		// Just new maybe?
+		PaidDateListener paidDateListener = new PaidDateListener(table);
 		
 		
 		
@@ -73,6 +74,7 @@ public class FinesTable extends JPanel {
 	}
 
 
+
 }
 
 
@@ -100,16 +102,7 @@ class MyTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-//		if (col < 2) {
 			return data[row][col];
-//		} else {
-//			if (data[row][col].equals("Y")) {
-//				return "Test String";
-//			} else if (data[row][col].equals("N")) {
-//				return "Test String 2";
-//			} else
-//				return "Test String 3";
-//		}
 	}
 
 	@Override

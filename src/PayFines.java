@@ -52,10 +52,9 @@ public class PayFines {
 					}
 					//Create and set up the window.
 					final JFrame frame = new JFrame("Fines Table");
-					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+					
 					//Create and set up the content pane.
-					FinesTable newContentPane = new FinesTable(rowData);
+					FinesGUITable newContentPane = new FinesGUITable(rowData);
 					newContentPane.setOpaque(true); //content panes must be opaque
 					frame.setContentPane(newContentPane);
 

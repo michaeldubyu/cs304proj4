@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class BorrowerTable {
@@ -16,7 +17,11 @@ public class BorrowerTable {
 
 	private static final int bidRequiredLength = 10;
 
+	private static final int bidMinLength = 0;
+	// our format for dates
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+	
 	//Insert a borrower into the table
 	//if successful, returns the borrower id, otherwise -1
 	public static int insertBorrower(String password, String name, String address, 
@@ -186,6 +191,11 @@ public class BorrowerTable {
 		return result;
 	}
 
+	
+	
+
+	
+	
 	/**
 	 * Checks all borrowing, for given bid, then for each transaction, is there a fine in the finetable?
 	 * @param bid
@@ -199,23 +209,24 @@ public class BorrowerTable {
 		ResultSet borCheckRS;
 		ArrayList<String> borrowingID = new ArrayList<String>();
 		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
-		if(bid.length() < bidRequiredLength || bid.length() > bidRequiredLength ) throw new IllegalArgumentException("Bid needs to be "+bidRequiredLength+" numbers long");
+		if(bid.length() > bidRequiredLength || bid.length() < bidMinLength ) throw new IllegalArgumentException("Bid needs to be at least "+bidMinLength+" numbers long, and at most "+bidRequiredLength);
 		try{
 			con = db_helper.connect("ora_i7f7", "a71163091");
 
 			borCheck = con.createStatement();
-			//TODO: Jonathan: should we do; WHERE paidDate IS NULL
-			borCheckRS = borCheck.executeQuery("SELECT * FROM Borrowing WHERE bid = " + bid);
-			//TODO: Jonathan: this is an improper/useless use of a while loop, should be hasNext and the next statement should always be .next()
+			//Get borid's that bid is associated with
+			 borCheckRS = borCheck.executeQuery("SELECT * FROM Borrowing WHERE bid = " + bid);
 
 			while (borCheckRS.next()){
 				borrowingID.add(borCheckRS.getString("borid"));
 			}
-
+			 
+			/*
+			 * For each borid, get 
+			 */
 			for (String transaction : borrowingID){
 				fineCheck = con.createStatement();
-				fineCheckRS = fineCheck.executeQuery("SELECT * FROM Fine WHERE boridid = " + transaction);
-				//SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy 'at' h:mm a");
+				fineCheckRS = fineCheck.executeQuery("SELECT * FROM Fine WHERE boridid = " + transaction +" AND PAIDDATE IS NULL");
 				if (fineCheckRS.next()){
 					//add it to the list of fines in result
 					String amount = fineCheckRS.getString("amount");
@@ -245,6 +256,26 @@ public class BorrowerTable {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	static boolean insertPaidDate(String fid, String date) throws IllegalArgumentException{
+		ResultSet fineCheckRS;
+		if(date.matches("^\\d*$")) throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD");
+		try{
+			Statement fineCheck = con.createStatement();
+			con = db_helper.connect("ora_i7f7", "a71163091");
+			//Convert the date to unix time
+			java.util.Date convertedDate = sdf.parse(date);
+			long time = convertedDate.getTime();
+			//TODO: Is this inserting? Its not seeminly finishing.
+			fineCheckRS = fineCheck.executeQuery("UPDATE Fine SET paidDate = '" +time+"' WHERE fid = '" +fid+ "' ");
+			con.commit();
+			return true;
+		}catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}
+		
 	}
 
 	static boolean checkHoldExists(String callNo){		
