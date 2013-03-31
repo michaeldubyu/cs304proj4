@@ -124,8 +124,8 @@ public class BorrowerTable {
 		catch (SQLException ex)
 		{
 			System.out.println("Message: " + ex.getMessage());
-			try 
-			{
+			 
+			try{
 				// undo the insert
 				con.rollback();	
 			}
