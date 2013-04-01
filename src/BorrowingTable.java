@@ -60,7 +60,7 @@ public class BorrowingTable {
 			
 			//set copyNo
 		    if (copyNo.equals(""))
-		    	throw new IllegalArgumentException("Copy numbers could be " + getCopyNumbers());
+		    	throw new IllegalArgumentException("Copy numbers could be " + getCopyNumbers(callNumber));
 		    else
 		    	ps.setString(3,copyNo);
 		    
@@ -166,17 +166,30 @@ public class BorrowingTable {
 	}
 	
 	public static String getCallNumbers(){
+		String callNumbers = "SELECT callNumber FROM book";
+		return getAll(callNumbers);
+	}
+	public static String getCopyNumbers(String callNumber){
+		String copyNumbers = "SELECT copyNo FROM BookCopy where callNumber = '" + callNumber + "' ";
+		return getAll(copyNumbers);
+	}
+
+	/**
+	 * @param query 
+	 * @return will turn this query into a list of the results
+	 */
+	private static String getAll(String query) {
 		StringBuilder sb = new StringBuilder();
 		try {
 			if (con.isClosed()) 			
 				con = db_helper.connect("ora_i7f7", "a71163091");
-			String callNumbers = "SELECT callNumber FROM book";
 			Statement stmt = con.createStatement();
-			ResultSet results = stmt.executeQuery(callNumbers);
+			ResultSet results = stmt.executeQuery(query);
 			while(results.next()){
 				sb.append(results.getString(1)).append(", ");
-				
 			}
+			// gets rid of last ','
+			if (sb.length() > 3) sb.deleteCharAt(sb.length()-2);
 			stmt.close();
 			results.close();
 			con.close();
@@ -187,12 +200,8 @@ public class BorrowingTable {
 		closeConnection();
 		return sb.toString();
 	}
-	public static String getCopyNumbers(){
-		StringBuilder sb = new StringBuilder();
-		
-		closeConnection();
-		return sb.toString();
-	}
+	
+	
 	
 	private static void closeConnection() {
 		try {
