@@ -64,9 +64,9 @@ create table BookCopy
 drop table HoldRequest;
 create table HoldRequest
 	(hid int not null primary key,
-	bid int null,
-	callNumber int null,
-	issuedDate date null);
+	bid varchar(20) null,
+	callNumber varchar(20) null,
+	issuedDate varchar(20) null);
 	
 drop sequence hold_incr;
 CREATE SEQUENCE hold_incr

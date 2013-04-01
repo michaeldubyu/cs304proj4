@@ -65,7 +65,6 @@ public class Clerk {
 				new ProcessRet();
 			}else if (e.getActionCommand()=="check overdues"){
 				new CheckOverdues(clerkFrame);
-				System.out.println("check overdues");
 			}
 		}
 	}

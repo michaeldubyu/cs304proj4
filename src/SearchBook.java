@@ -27,6 +27,7 @@ public class SearchBook {
 		Label titleLabel = new Label("Title :");
 		Label authorLabel = new Label("Author :");
 		Label subjectLabel = new Label("Subject :");
+		
 
 		searchFrame.add(titleLabel);
 		searchFrame.add(title);
@@ -53,13 +54,13 @@ public class SearchBook {
 	        		final Frame successFrame = new Frame("Results");
 
 	        		//callnumber, name, count
-	        		Object rowData[][] = new Object[result.size()][3];
+	        		Object rowData[][] = new Object[result.size()][5];
 	        		int i = 0;
 	        		for (ArrayList<String> s:result){
 	        			rowData[i] = s.toArray();
 	        			i++;
 	        		}
-	        		Object columnNames[] = { "Call Number", "Title", "Author" };
+	        		Object columnNames[] = { "Call Number", "Title", "Author", "In", "Out" };
 	        		JTable table = new JTable(rowData, columnNames);
 
 	        		JScrollPane scroll = new JScrollPane(table);

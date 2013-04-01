@@ -118,7 +118,7 @@ public class Reports {
 				Statement  stmtSubject = con.createStatement();
 				String callNumber = rs.getString(3);
 				ResultSet rsSubject = stmtSubject.executeQuery("SELECT * FROM Book b, hasSubject s WHERE b.callNumber = '"+callNumber+"'"+
-						"AND s.subject LIKE '%"+ subject + "%'");
+						"AND s.callNumber = b.callNumber AND s.subject LIKE '%"+ subject + "%'");
 				
 				int i = 0;
 				while (rsSubject.next()&&i<1)

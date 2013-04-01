@@ -180,8 +180,20 @@ public class BorrowerTable {
 		return result;
 	}
 
-
-
+	/*
+	 * Checks that a borrower exists.
+	 */
+	public static boolean borrowerExists(String bid) throws Exception{
+		Statement check;
+		ResultSet checkRS;
+		con = db_helper.connect("ora_i7f7","a71163091");
+		
+		check = con.createStatement();
+		checkRS = check.executeQuery("SELECT * FROM BORROWER WHERE bid = '" + bid + "'");
+		
+		if (checkRS.next()) return true;
+		return false;
+	}
 
 
 
@@ -248,27 +260,27 @@ public class BorrowerTable {
 		return result;
 	}
 
-	static boolean updatePaidDate(String fid, String date, String fineStartDate) throws IllegalArgumentException{
+	static boolean updatePaidDate(String amount, String date, String fineStartDate) throws IllegalArgumentException{
 		date = date.trim();
 		if(date.matches( "^\\d*$")) throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD");
 		
 		Statement fineCheck = null;
 			try {
+				System.out.println(amount + " " + date + " " + fineStartDate);
+				
 			
-			con = db_helper.connect("ora_i7f7", "a71163091");
-			fineCheck = con.createStatement();
-			//Convert the date to unix time
-			java.util.Date convertedPaidDate = sdf.parse(date);
-			java.util.Date convertedDate = sdf.parse(fineStartDate);
-			long time = convertedPaidDate.getTime();
-			if(time < convertedDate.getTime()) throw new IllegalArgumentException("Sorry, your paid date is less than the issued date");
-			String updateString = "UPDATE Fine SET paidDate = '" +time+"' WHERE fid = '" +fid+ "' ";
-			int numOfQueriesEffected = fineCheck.executeUpdate(updateString);
-			System.out.println("Number of rows effected: " + numOfQueriesEffected);
-			con.commit();
-			fineCheck.close();
-			con.close();
-			return true;
+				con = db_helper.connect("ora_i7f7", "a71163091");
+				fineCheck = con.createStatement();
+				//Convert the date to unix time
+				java.util.Date convertedPaidDate = sdf.parse(date);
+				java.util.Date convertedDate = sdf.parse(fineStartDate);
+				long time = convertedPaidDate.getTime()/1000;
+				if(time < convertedDate.getTime()) throw new IllegalArgumentException("Sorry, your paid date is less than the issued date");
+				String updateString = "UPDATE Fine SET paidDate = '" +time+"' WHERE amount = " +amount;
+				int numOfQueriesEffected = fineCheck.executeUpdate(updateString);
+				con.commit();
+				con.close();
+				return true;
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (ParseException e) {
@@ -411,14 +423,10 @@ public class BorrowerTable {
 			{
 				throw new IllegalArgumentException("There are currently copies of the book in");
 			}
-			rs = stmt.executeQuery("SELECT Count(*) AS tSize FROM HoldRequest");
-			rs.next();
-			hid = rs.getInt("tSize") + 1;
-			ps = con.prepareStatement("INSERT INTO HoldRequest VALUES (?,?,?,?)");
-			ps.setString(1, String.valueOf(hid));
-			ps.setString(2, String.valueOf(bid));
-			ps.setString(3, callNumber);
-			ps.setString(4, String.valueOf(date));
+			ps = con.prepareStatement("INSERT INTO HoldRequest (bid, callnumber, issueddate) VALUES (?,?,?)");
+			ps.setString(1, bid);
+			ps.setString(2, callNumber);
+			ps.setString(3, String.valueOf(date));
 			ps.executeUpdate();
 			con.commit();
 			con.close();
