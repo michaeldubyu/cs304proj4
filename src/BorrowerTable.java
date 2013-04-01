@@ -194,8 +194,20 @@ public class BorrowerTable {
 		return result;
 	}
 
-
-
+	/*
+	 * Checks that a borrower exists.
+	 */
+	public static boolean borrowerExists(String bid) throws Exception{
+		Statement check;
+		ResultSet checkRS;
+		con = db_helper.connect("ora_i7f7","a71163091");
+		
+		check = con.createStatement();
+		checkRS = check.executeQuery("SELECT * FROM BORROWER WHERE bid = '" + bid + "'");
+		
+		if (checkRS.next()) return true;
+		return false;
+	}
 
 
 
