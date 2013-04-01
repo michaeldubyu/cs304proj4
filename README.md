@@ -18,4 +18,8 @@ SECTION 2 - Borrower Actions
 - Place a hold request for a book that is out. When the item is returned, the system sends an email to the borrower. 
 - Pay a fine. If the user has no fines, they are alerted of this. If they have fines, it is displayed with the issued date, amount, and a field for them to edit with the date they have paid. After they have edited the field, the fine is considered paid.
 
+SECTION 3 - Librarian Actions
 
+- Adds a new book or new copy of an existing book to the library. The librarian provides the information for the new book, and the system adds it to the library. All fields must be filled out Since regex for callnumbers is extremely difficult, the burden is on the library to get this correct. The system makes sure that the ISBN code is a legimate 10-digit ISBN number. 
+- Generate a report with all the books that have been checked out. For each book the report shows the callnumber, title, copy number, the date it was checked out and the due date. The system flags the items that are overdue. The items are ordered by the book call number.  If a subject is provided the report lists only books related to that subject, otherwise all the books that are out are listed by the report.
+- Generate a report with the most popular items in a given year.  The librarian provides a year and a number n. University Library was founded in 1970, so n must be at least 1970. It is just a coincidence that this is the same year that unix time started. The system lists out the top n books that where borrowed the most times during that year. The books are ordered by the number of times they were borrowed.
