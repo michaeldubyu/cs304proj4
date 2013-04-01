@@ -19,13 +19,18 @@ public class PaidDateListener implements TableModelListener {
 		int col = e.getColumn();
 		TableModel model = (TableModel)e.getSource();
 		String columnName = model.getColumnName(col);
-		Object data = model.getValueAt(row, col);
+		Object paidDate = model.getValueAt(row, col);
 		Object fid = table.getValueAt(row, 0);
-		assert(data instanceof String);
+		Object fineStartDate = model.getValueAt(row, 1);
+		assert(paidDate instanceof String && fineStartDate instanceof String);
 		assert(fid instanceof String);
-		System.out.println("Table event happened! WOOO!");
-		
-		BorrowerTable.insertPaidDate((String) fid, (String)data);
+		try {
+			BorrowerTable.updatePaidDate((String) fid, (String)paidDate, (String) fineStartDate);
+			System.out.println("Table event happened! WOOO!");
+		} catch (IllegalArgumentException e1) {
+			
+			new ErrorFrame(e1.getLocalizedMessage(), null);
+		}
 			
 	}
 

@@ -92,20 +92,8 @@ public class AddBook {
 						}
 					} );
 				} catch (Exception err) {
-					final Frame errorFrame = new Frame("Error!");
-					Label error = new Label(err.getMessage());
-					errorFrame.add(error);
-					errorFrame.pack();
-					errorFrame.setVisible(true);
-					errorFrame.setAlwaysOnTop(true);
-					errorFrame.setLocationRelativeTo(bookFrame);
-					errorFrame.addWindowListener( new WindowAdapter() {
-						public void windowClosing(WindowEvent we) {
-							errorFrame.setVisible(false);
-						}
-					} );
+					new ErrorFrame(err.getLocalizedMessage(), bookFrame);
 				}
-				//bookFrame.dispose();
 			}
 		});
 		bookFrame.addWindowListener( new WindowAdapter(){

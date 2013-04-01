@@ -29,10 +29,10 @@ public class FinesGUITable extends JPanel {
 		PaidDateListener paidDateListener = new PaidDateListener(table);
 		
 		
-		
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		table.setFillsViewportHeight(true);
 
+		table.repaint();
 		if (DEBUG) {
 			table.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
@@ -82,17 +82,24 @@ public class FinesGUITable extends JPanel {
 class MyTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private Object[][] data;
-	private String[] headers;
+	private String[] header;
 
 	public MyTableModel(Object[][] data, String[] headers) {
 		super();
 		this.data = data;
-		this.headers = headers;
+		this.header = headers;
+		
 	}
+	
+	@Override
+    public String getColumnName(int col) {
+           return header[col];
+        }
+
 
 	@Override
 	public int getColumnCount() {
-		return headers.length;
+		return header.length;
 	}
 
 	@Override

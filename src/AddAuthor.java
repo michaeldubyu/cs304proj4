@@ -10,44 +10,41 @@ import java.awt.event.WindowEvent;
 import javax.swing.JTextField;
 
 
-public class AddCopy {
+public class AddAuthor {
 
-		public AddCopy(){
+		public AddAuthor(){
 						
 			final Frame insertFrame = new Frame();
 			final JTextField callNo = new JTextField(20);
-			final JTextField quantity = new JTextField(20);
+			final JTextField author = new JTextField(20);
 			
 			insertFrame.setLayout(new GridLayout(3,2));
 
 			Label callNoLabel = new Label("Call Number* :");
-			Label quantityLabel = new Label("Quantity* :");
+			Label authorLabel = new Label("Additional Author Name* :");
 
 			insertFrame.add(callNoLabel);
 			insertFrame.add(callNo);
-			insertFrame.add(quantityLabel);
-			insertFrame.add(quantity);
+			insertFrame.add(authorLabel);
+			insertFrame.add(author);
 
 			Button submit = new Button("Submit");
 			insertFrame.add(new Label("(*)Required fields marked.")); //to pad the submit button to the right
 			insertFrame.add(submit);
 			insertFrame.setLocationRelativeTo(null);
 			insertFrame.pack();
-			insertFrame.setTitle("Add A Borrower");
+			insertFrame.setTitle("Add An Author");
 			insertFrame.setVisible(true);
 			callNoLabel.requestFocus();
 			
 		    submit.addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
 		          //when the submit button is clicked
-		        	try{
-		        		int q;
-		        		if (quantity.getText().equals("")) q = 1;
-		        		else q = Integer.parseInt(quantity.getText());
-		        		
-			        	int quantityAdded = BookTable.insertCopy(callNo.getText(),false, q);
+		        	try{		        		
+			        	if (author.getText().equals("")) throw new IllegalArgumentException("Author name must not be blank!");
+			        	String quantityAdded = BookTable.addAuthor(callNo.getText(), author.getText());
 		        		final Frame successFrame = new Frame("Success!");
-		        		Label success = new Label(quantity.getText() + " copies were successfully added.");
+		        		Label success = new Label(author.getText() + " was successfully added as an author to this book.");
 		        		successFrame.add(success);
 		        		successFrame.pack();
 		        		successFrame.setVisible(true);
