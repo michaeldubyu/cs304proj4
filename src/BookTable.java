@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.TreeSet;
 
 
 
@@ -14,33 +16,118 @@ public class BookTable {
 	private static final String[] attNames = 
 		{"callNumber", "isbn", "title", "mainAuthor", "publisher", "year"};
 
-	public static ArrayList<ArrayList<String>> searchBook(String titleSearch, String authorSearch, String subjectSearch) throws IllegalArgumentException
+	public static ArrayList<ArrayList<String>> searchBook(String searchTitle, String searchAuthor, String searchSubject) throws IllegalArgumentException
 	{
-		if(titleSearch.equals(""))
-		{
-			titleSearch = "FFFFFFFFFFFFF";
-		}
-		if(authorSearch.equals(""))
-		{
-			authorSearch = "FFFFFFFFFFFFF";
-		}
-		if(subjectSearch.equals(""))
-		{
-			subjectSearch = "FFFFFFFFFFFFF";
-		}
-		try {
-			con = db_helper.connect("ora_i7f7", "a71163091");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
+		String title = new String(searchTitle);
+		String author = new String(searchAuthor);
+		String subject = new String(searchSubject);
+		
+		if(searchTitle.equals(""))
+			title = "FFFFFFFFFFFFF";
+		if(searchAuthor.equals(""))
+			author = "FFFFFFFFFFFFF";
+		if(searchSubject.equals(""))
+			subject = "FFFFFFFFFFFFF";
+		
+		
+		
 		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+		
 		ResultSet rs;
+		
 		Statement stmt;
-
+		
+		Statement stmtSubject;
+		Statement stmtAuthor;
+		Statement stmtTitle;
+		
+		ResultSet rsSubject;
+		ResultSet rsAuthor;
+		ResultSet rsTitle;
+		
 		try
 		{
+			
+			con = db_helper.connect("ora_i7f7", "a71163091");
+			
 			stmt = con.createStatement();
-
+			stmtSubject = con.createStatement();
+			stmtAuthor = con.createStatement();
+			stmtTitle = con.createStatement();
+			
+			
+			/*
+			rs = stmt.executeQuery("SELECT x.callNumber, count(*) as qty FROM " +
+					"((Select Distinct s.callNumber FROM hasSubject s WHERE "+
+                    "s.subject LIKE '%"+subject+"%') " +
+					"UNION "+
+                    "(Select distinct b1.callNumber FROM book b1 WHERE b1.title LIKE '%"+title+"%') "+
+                    "UNION "+
+                    "(Select DISTINCT b.callNumber FROM book b WHERE b.mainAuthor LIKE '%"+author+"%' "+
+			                                  "OR EXISTS (SELECT * from hasAuthor a where a.callNumber = b.callNumber "+
+					                                      "AND a.name LIKE '%"+author+"%'))) x "
+					+ "GROUP BY x.callNumber ORDER BY qty DESC"
+					                                      );
+			
+			*/
+			
+			
+			rsSubject = stmtSubject.executeQuery("Select Distinct b.callNumber FROM book b, hasSubject s WHERE b.callNumber = s.callNumber "+
+			                                     "AND s.subject LIKE '%"+subject+"%'");
+			
+			rsTitle = stmtTitle.executeQuery("Select distinct b.callNumber FROM book b WHERE b.title LIKE '%"+title+"%'");
+			
+			rsAuthor = stmtAuthor.executeQuery("Select DISTINCT b.callNumber FROM book b WHERE b.mainAuthor LIKE '%"+author+"%'"+
+			                                  "OR EXISTS (SELECT * from hasAuthor a where a.callNumber = b.callNumber "+
+					                                      "AND a.name LIKE '%"+author+"%')");
+			
+			
+			
+			
+			
+			ArrayList<String> hits = new ArrayList<String>();
+			
+			while(rsSubject.next()){
+				hits.add(rsSubject.getString(1));}
+			
+			while(rsTitle.next()){
+				hits.add(rsTitle.getString(1));}
+			
+			while(rsAuthor.next()){
+				hits.add(rsAuthor.getString(1));}
+			
+			Collections.sort(hits);
+			
+			ArrayList<String> oneHit = new ArrayList<String>();
+			ArrayList<String> twoHits = new ArrayList<String>();
+			ArrayList<String> threeHits = new ArrayList<String>();
+			
+			while (hits.size()>0){
+				
+				if (hits.size()>2&&hits.get(0).equals(hits.get(1))&&hits.get(1).equals(hits.get(2)))
+				{threeHits.add(hits.get(0));
+				hits.remove(0);hits.remove(0);hits.remove(0);}
+				
+				else if (hits.size()>1&&hits.get(0).equals(hits.get(1)))
+				{twoHits.add(hits.get(0));
+				hits.remove(0);hits.remove(0);}
+				
+				else {oneHit.add(hits.get(0)); hits.remove(0);}
+			}
+			
+			hits.addAll(threeHits);hits.addAll(twoHits);hits.addAll(oneHit);
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			/*
 			rs = stmt.executeQuery(	  "SELECT d.callNumber, d.title, d.mainAuthor, qty FROM book d, "
 					+ "(SELECT callNumber, count(*) AS qty FROM ("
 					+ "(SELECT * FROM Book b "
@@ -58,15 +145,20 @@ public class BookTable {
 					+ "AND h.subject LIKE '%" + subjectSearch + "%'))) "
 					+ "GROUP BY callNumber ORDER BY qty desc) c "
 					+ "WHERE d.callnumber = c.callnumber");
-
-
-			int i = 0;
-			while(rs.next())
+			*/
+			
+			
+			int j = 0;
+			while(j < hits.size())
 			{
-				String callNumber = rs.getString("callNumber");
-				String title = rs.getString("title");
-				String author = rs.getString("mainAuthor");
-
+				String callNumber = hits.get(j);
+				
+				ResultSet atts;
+				atts = stmt.executeQuery("select * from book where callnumber = '" + callNumber + "'");
+				atts.next();
+				String currentTitle = atts.getString("title");
+				String currentAuthor = atts.getString("mainAuthor");
+				
 				ResultSet inout;
 				inout = stmt.executeQuery("select count(*) as numin from bookcopy where callnumber = '" + callNumber + "' AND status = 'in'");
 				inout.next();
@@ -75,21 +167,25 @@ public class BookTable {
 				inout.next();
 				String numout = inout.getString("numout");
 				ArrayList<String> temp = new ArrayList<String>();
-				temp.add(0, callNumber);
-				temp.add(1, title);
-				temp.add(2, author);
-				temp.add(3, numin);
-				temp.add(4, numout);
-				results.add(i,temp);
-				i++;
+				temp.add(callNumber);
+				temp.add(currentTitle);
+				temp.add(currentAuthor);
+				temp.add(numin);
+				temp.add(numout);
+				results.add(temp);
+				j++;
+				
+				
 			}
+			con.commit();
+			con.close();
 		}catch(Exception e)
 		{
 
 			e.printStackTrace();
 
 		}
-
+		
 		return results;
 	}
 
