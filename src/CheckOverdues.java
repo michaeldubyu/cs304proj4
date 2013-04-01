@@ -35,13 +35,13 @@ public class CheckOverdues {
 					rowData[i] = s.toArray();
 					i++;
 				}
-				Object columnNames[] = { "Borrower ID", "Borrower Name", "Title", "Out Date", "email", "Borrower Type" };
+				Object columnNames[] = { "Borrower ID", "Borrower Name", "Title", "Out Date", "Email", "Borrower Type" };
 				JTable table = new JTable(rowData, columnNames);
 				JScrollPane scroll = new JScrollPane(table);
 				successFrame.add(scroll);
 			}
 			else {
-				JLabel noResults = new JLabel("There are no fines outstanding");
+				JLabel noResults = new JLabel("There are no overdue books.");
 				successFrame.add(noResults);
 			}
 			successFrame.pack();

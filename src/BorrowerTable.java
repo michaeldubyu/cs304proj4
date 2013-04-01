@@ -263,13 +263,13 @@ public class BorrowerTable {
 		return result;
 	}
 
-	static boolean updatePaidDate(String fid, String date, String fineStartDate) throws IllegalArgumentException{
+	static boolean updatePaidDate(String amount, String date, String fineStartDate) throws IllegalArgumentException{
 		date = date.trim();
 		if(date.matches( "^\\d*$")) throw new IllegalArgumentException("Date must be a in a format like: YYYY-MM-DD");
 		
 		Statement fineCheck = null;
 			try {
-				System.out.println(fid + " " + date + " " + fineStartDate);
+				System.out.println(amount + " " + date + " " + fineStartDate);
 				
 			
 				con = db_helper.connect("ora_i7f7", "a71163091");
@@ -277,12 +277,10 @@ public class BorrowerTable {
 				//Convert the date to unix time
 				java.util.Date convertedPaidDate = sdf.parse(date);
 				java.util.Date convertedDate = sdf.parse(fineStartDate);
-				long time = convertedPaidDate.getTime();
+				long time = convertedPaidDate.getTime()/1000;
 				if(time < convertedDate.getTime()) throw new IllegalArgumentException("Sorry, your paid date is less than the issued date");
-				String updateString = "UPDATE Fine SET paidDate = '" +time+"' WHERE fid = " +fid;
+				String updateString = "UPDATE Fine SET paidDate = '" +time+"' WHERE amount = " +amount;
 				int numOfQueriesEffected = fineCheck.executeUpdate(updateString);
-				System.out.println("Number of rows effected: " + numOfQueriesEffected);
-				System.out.println(time);
 				con.commit();
 				con.close();
 				return true;
