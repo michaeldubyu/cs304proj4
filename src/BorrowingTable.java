@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -46,23 +47,20 @@ public class BorrowingTable {
 		
 		
 			if (userType == null) throw new IllegalArgumentException("User does not exist!");
-			
 			PreparedStatement  ps;
-
 			ps = con.prepareStatement("INSERT INTO borrowing (bid, callnumber, copyno, outdate, indate) VALUES (?,?,?,?,?)");
-			
 			//set bid - at this point its already validated, so no longer need to run regex through it
 			ps.setString(1, bid);
 			
 			//set callNumber
 		    if (callNumber.equals(""))
-				throw new IllegalArgumentException("Call number cannot be empty!");
+				throw new IllegalArgumentException("Call numbers could be " + getCallNumbers());
 		    else
 		    	ps.setString(2,callNumber);
 			
 			//set copyNo
 		    if (copyNo.equals(""))
-		    	throw new IllegalArgumentException("Copy number cannot be empty!");
+		    	throw new IllegalArgumentException("Copy numbers could be " + getCopyNumbers());
 		    else
 		    	ps.setString(3,copyNo);
 		    
@@ -156,9 +154,6 @@ public class BorrowingTable {
 					  
 					  result.add(aBorrowing);
 				  }
-				
-				  
-		
 			  }
 			
 			
@@ -167,15 +162,45 @@ public class BorrowingTable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		  
-		
-		
-		
-		
 		return result;
 	}
 	
+	public static String getCallNumbers(){
+		StringBuilder sb = new StringBuilder();
+		try {
+			if (con.isClosed()) 			
+				con = db_helper.connect("ora_i7f7", "a71163091");
+			String callNumbers = "SELECT callNumber FROM book";
+			Statement stmt = con.createStatement();
+			ResultSet results = stmt.executeQuery(callNumbers);
+			while(results.next()){
+				sb.append(results.getString(1)).append(", ");
+				
+			}
+			stmt.close();
+			results.close();
+			con.close();
+			// for every 5 queries add new line
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		closeConnection();
+		return sb.toString();
+	}
+	public static String getCopyNumbers(){
+		StringBuilder sb = new StringBuilder();
+		
+		closeConnection();
+		return sb.toString();
+	}
 	
+	private static void closeConnection() {
+		try {
+			if (!con.isClosed())
+				con.close();
+		} catch (SQLException e) {
+			System.out.println("Dude, connection is giving us some trouble");
+		}
+	}
 	
 }

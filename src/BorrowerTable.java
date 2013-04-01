@@ -144,40 +144,26 @@ public class BorrowerTable {
 	//Display all borrowers in the database
 	public static ArrayList<ArrayList<String>> showBorrowers()
 	{
-
 		Statement  stmt;
 		ResultSet  rs;
-
 		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
-
 		try
 		{
 			stmt = con.createStatement();
-
 			rs = stmt.executeQuery("SELECT * FROM borrowers");
-
 			// get info on ResultSet
 			ResultSetMetaData rsmd = rs.getMetaData();
-
 			// get number of columns
 			int numCols = rsmd.getColumnCount();
-
-
 			while(rs.next())
 			{
 				// for display purposes get everything from Oracle 
 				// as a string
-
 				// simplified output formatting; truncation may occur
-
 				ArrayList<String> aBorrower = new ArrayList<String>();
-
 				for (String anAttribute: attNames)
 					aBorrower.add(rs.getString(anAttribute));
-
 				result.add(aBorrower);
-
-
 			}
 
 			// close the statement; 
@@ -229,14 +215,13 @@ public class BorrowerTable {
 			 */
 			for (String transaction : borrowingID){
 				fineCheck = con.createStatement();
-				fineCheckRS = fineCheck.executeQuery("SELECT * FROM Fine WHERE boridid = " + transaction +" AND PAIDDATE IS NULL");
+				fineCheckRS = fineCheck.executeQuery("SELECT * FROM Fine WHERE boridid = " + transaction +" AND paiddate IS NULL");
 				if (fineCheckRS.next()){
 					//add it to the list of fines in result
 					String amount = fineCheckRS.getString("amount");
 					String issuedDate = fineCheckRS.getString("issueddate");
 					String paidDate = fineCheckRS.getString("paiddate");
 
-					//TODO: If it can get working, uncomment the other stuff
 					Date readableIssueDate = new Date(Long.parseLong(issuedDate));
 					Date readablePaidDate;
 
