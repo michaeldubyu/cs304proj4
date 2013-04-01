@@ -37,7 +37,22 @@ public class processHold {
 	        public void actionPerformed(ActionEvent e) {
 	          //when the submit button is clicked
 	        	try{
-	        		BorrowerTable.placeHold(callNo.getText(), bid.getText());
+	        		int hid = BorrowerTable.placeHold(callNo.getText(), bid.getText());
+	        		if (hid == -1) throw new IllegalArgumentException("Hold request was not successfully completed! Please check the userid.");
+	        		else {
+	            		final Frame errorFrame = new Frame("Error!");
+		        		Label success = new Label("Holdrequest with ID " + hid + " was successfully added!");
+		        		errorFrame.add(success);
+		        		errorFrame.pack();
+		        		errorFrame.setVisible(true);
+		        		errorFrame.setAlwaysOnTop(true);
+		        		errorFrame.setLocationRelativeTo(insertFrame);
+		                errorFrame.addWindowListener( new WindowAdapter() {
+		                    public void windowClosing(WindowEvent we) {
+		                        errorFrame.setVisible(false);
+		                    }
+		                } );		
+	        		}
 	        	}catch(Exception argException){
 	        		final Frame errorFrame = new Frame("Error!");
 	        		Label error = new Label(argException.getMessage());
